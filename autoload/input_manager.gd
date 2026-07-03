@@ -30,6 +30,22 @@ func pop_context() -> void:
 func get_active_context() -> String:
 	return _context_stack.back()
 
+## Check if an action was just pressed in this frame.
+func is_action_just_pressed(action: String) -> bool:
+	return Input.is_action_just_pressed(action)
+
+## Check if an action is currently held.
+func is_action_pressed(action: String) -> bool:
+	return Input.is_action_pressed(action)
+
+## Check if an action was just released in this frame.
+func is_action_just_released(action: String) -> bool:
+	return Input.is_action_just_released(action)
+
+## Get the strength of an analog action (1.0 for digital inputs).
+func get_action_strength(action: String) -> float:
+	return Input.get_action_strength(action)
+
 func rebind_action(action: String, event: InputEvent) -> bool:
 	if not InputMap.has_action(action):
 		push_error("InputManager: Unknown action: %s" % action)

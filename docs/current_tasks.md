@@ -26,34 +26,23 @@ See [phase2_roadmap.md](phase2_roadmap.md) for full details.
 
 ---
 
-## Active Milestone: M1 — "Boot to VN"
+## Active Milestone: M2 — "Walk" (Player Movement)
 
-**Goal**: Player boots the game, sees main menu, watches the prologue VN with text and choices.
+**Goal**: Player can move a character in a 2D space with camera following.
 
-**Playable result**: Boot → Main Menu → Prologue VN (text, portraits, choices)
+**Playable result**: Walk around a simple map with camera following
 
 | # | Task | Status | Files to Create |
 |---|------|--------|-----------------|
-| 1.1 | Create `visual_novel.tscn` — root VN scene | ✅ DONE | `scenes/ui/vn/visual_novel.tscn` |
-| 1.2 | Create `vn_dialogue_box.tscn` — text display, name label, continue indicator | ✅ DONE | `scenes/ui/vn/vn_dialogue_box.tscn` |
-| 1.3 | Create `vn_portrait.tscn` — portrait container with side support | ✅ DONE | `scenes/ui/vn/vn_portrait.tscn` |
-| 1.4 | Create `vn_choice_menu.tscn` — choice button list | ✅ DONE | `scenes/ui/vn/vn_choice_menu.tscn` |
-| 1.5 | Wire Boot → Main Menu → VN → sample_prologue.dialogue | ✅ DONE | — |
-| 1.6 | Test full prologue playthrough | ✅ DONE | — |
+| 2.1 | Create `player.tscn` (CharacterBody2D + Collision + Sprite + Camera) | ✅ DONE | `scenes/characters/player.tscn` |
+| 2.2 | Implement `player_controller.gd` | ✅ DONE | `scripts/world/player_controller.gd` |
+| 2.3 | Create `placeholder_map.tscn` | ✅ DONE | `scenes/exploration/placeholder_map.tscn` |
+| 2.4 | Wire player input to InputManager | ✅ DONE | `autoload/input_manager.gd` |
+| 2.5 | Create hero character resource | ✅ DONE | `database/characters/hero.tres` |
 
 ---
 
 ## Upcoming Milestones
-
-### M2: "Walk" — Player Movement
-
-| # | Task | Status | Files to Create |
-|---|------|--------|-----------------|
-| 2.1 | Create `player.tscn` (CharacterBody2D + Collision + Sprite + Camera) | ⬜ TODO | `scenes/characters/player.tscn` |
-| 2.2 | Implement `player_controller.gd` | ⬜ TODO | `scripts/world/player_controller.gd` |
-| 2.3 | Create `placeholder_map.tscn` | ⬜ TODO | `scenes/exploration/placeholder_map.tscn` |
-| 2.4 | Wire player input to InputManager | ⬜ TODO | — |
-| 2.5 | Create hero character resource | ⬜ TODO | `database/characters/hero.tres` |
 
 ### M3: "Talk" — NPC Interaction → VN
 
@@ -155,6 +144,8 @@ See [phase2_roadmap.md](phase2_roadmap.md) for full details.
 | World Navigation System | 2026-07-01 | 21 files: NavigationManager, WorldMap, RegionHub, BuildingInterior, data structures, docs |
 | Sample world data | 2026-07-01 | 2 regions, 4 buildings, 1 shop, 2 region connections |
 | Phase 2 Roadmap | 2026-07-03 | 11-milestone plan in [phase2_roadmap.md](phase2_roadmap.md) |
+| M1 — "Boot to VN" | 2026-07-03 | 4 VN scenes, boot → main menu → VN flow |
+| M2 — "Walk" (Player Movement) | 2026-07-03 | player.tscn, player_controller.gd, placeholder_map.tscn, hero.tres, InputManager wiring |
 
 ---
 

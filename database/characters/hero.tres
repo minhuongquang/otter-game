@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://charhero001"]
+
+[resource]
+script = Resource("res://scripts/core/character_resource.gd")
+character_id = "hero"
+display_name = "Hero"

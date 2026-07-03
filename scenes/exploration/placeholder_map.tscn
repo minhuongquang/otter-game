@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://placeholder001"]
+
+[ext_resource type="PackedScene" uid="uid://player001" path="res://scenes/characters/player.tscn" id="1"]
+
+[node name="PlaceholderMap" type="Node2D"]
+
+[node name="GroundVisual" type="Polygon2D" parent="."]
+color = Color(0.3, 0.6, 0.3, 1.0)
+polygon = PackedVector2Array(-960, -540, 960, -540, 960, 540, -960, 540)
+position = Vector2(960, 540)
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(960, 540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Player" parent="."]
+instance = ExtResource("1")
+position = Vector2(960, 540)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(1920, 1080)
