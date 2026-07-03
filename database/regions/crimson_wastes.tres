@@ -1,0 +1,58 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/region_resource.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/building_entry.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/region_connection.gd" id="3"]
+
+[sub_resource type="Resource" id="Building_gate"]
+script = ExtResource("2")
+building_id = "crimson_gate"
+display_name = "Crimson Gate"
+description = "A massive stone gate marking the entrance to the Crimson Wastes."
+building_type = 8
+scene_path = ""
+required_flag = ""
+npc_ids = Array[String](["gate_guard"])
+shop_id = ""
+save_point = false
+position_on_map = Vector2(300, 200)
+
+[sub_resource type="Resource" id="Building_inn"]
+script = ExtResource("2")
+building_id = "crimson_inn"
+display_name = "Desert Oasis Inn"
+description = "A rare refuge in the harsh desert."
+building_type = 1
+scene_path = "res://scenes/world/building_interior.tscn"
+required_flag = ""
+npc_ids = Array[String](["oasis_keeper"])
+shop_id = ""
+save_point = true
+position_on_map = Vector2(500, 200)
+
+[sub_resource type="Resource" id="Connection_1"]
+script = ExtResource("3")
+from_region = "verdant_plains"
+to_region = "crimson_wastes"
+required_flag = "visited_verdant_plains"
+required_quest = ""
+label = "Northern Pass"
+travel_time = 2.0
+
+[resource]
+script = ExtResource("1")
+region_id = "crimson_wastes"
+display_name = "Crimson Wastes"
+description = "A harsh desert region of red sand and scorching sun. Only the strong survive here."
+world_map_position = Vector2(400, 100)
+icon = null
+required_flag = "defeated_goblin_king"
+required_quest = ""
+story_flag = "visited_crimson_wastes"
+buildings = Array[ExtResource("2")]([SubResource("Building_gate"), SubResource("Building_inn")])
+npc_ids = Array[String](["gate_guard", "oasis_keeper"])
+shop_ids = Array[String]([])
+dungeon_ids = Array[String]([])
+connections = Array[ExtResource("3")]([SubResource("Connection_1")])
+ambient_bgm = null
+ambient_sfx = null

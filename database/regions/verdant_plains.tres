@@ -1,0 +1,78 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/region_resource.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/building_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="Building_inn"]
+script = ExtResource("2")
+building_id = "verdant_inn"
+display_name = "Traveler's Rest Inn"
+description = "A cozy inn run by a retired adventurer."
+building_type = 1
+scene_path = "res://scenes/world/building_interior.tscn"
+required_flag = ""
+npc_ids = Array[String](["mia_innkeeper"])
+shop_id = ""
+save_point = true
+position_on_map = Vector2(300, 200)
+
+[sub_resource type="Resource" id="Building_shop"]
+script = ExtResource("2")
+building_id = "verdant_shop"
+display_name = "General Goods"
+description = "A small shop selling adventuring supplies."
+building_type = 2
+scene_path = "res://scenes/world/building_interior.tscn"
+required_flag = ""
+npc_ids = Array[String](["tom_shopkeeper"])
+shop_id = "verdant_general"
+save_point = false
+position_on_map = Vector2(500, 200)
+
+[sub_resource type="Resource" id="Building_temple"]
+script = ExtResource("2")
+building_id = "verdant_temple"
+display_name = "Serene Temple"
+description = "An ancient temple dedicated to the goddess of light."
+building_type = 5
+scene_path = "res://scenes/world/building_interior.tscn"
+required_flag = ""
+npc_ids = Array[String](["elder_lucius"])
+shop_id = ""
+save_point = true
+position_on_map = Vector2(700, 200)
+
+[sub_resource type="Resource" id="Building_dungeon"]
+script = ExtResource("2")
+building_id = "verdant_dungeon"
+display_name = "Forgotten Cave"
+description = "A dark cave said to hold ancient treasures."
+building_type = 7
+scene_path = ""
+required_flag = ""
+npc_ids = Array[String]([])
+shop_id = ""
+save_point = false
+position_on_map = Vector2(400, 400)
+
+[resource]
+script = ExtResource("1")
+region_id = "verdant_plains"
+display_name = "Verdant Plains"
+description = "A lush green region with rolling hills and flowering meadows. The starting point for any adventurer."
+world_map_position = Vector2(400, 300)
+icon = null
+required_flag = ""
+required_quest = ""
+story_flag = "visited_verdant_plains"
+buildings = Array[ExtResource("2")]([SubResource("Building_inn"), SubResource("Building_shop"), SubResource("Building_temple"), SubResource("Building_dungeon")])
+npc_ids = Array[String]([
+	"elder_lucius", 
+	"mia_innkeeper", 
+	"tom_shopkeeper"
+])
+shop_ids = Array[String](["verdant_general"])
+dungeon_ids = Array[String]([])
+connections = Array[ExtResource("res://scripts/core/region_connection.gd")]([])
+ambient_bgm = null
+ambient_sfx = null

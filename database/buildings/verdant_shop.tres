@@ -1,0 +1,13 @@
+[gd_resource type="Resource" format=3]
+[resource]
+script = Resource("res://scripts/core/building_entry.gd")
+building_id = "verdant_shop"
+display_name = "General Goods"
+description = "A small shop selling adventuring supplies."
+building_type = 2
+scene_path = "res://scenes/world/building_interior.tscn"
+required_flag = ""
+npc_ids = Array[String](["tom_shopkeeper"])
+shop_id = "verdant_general"
+save_point = false
+position_on_map = Vector2(500, 200)

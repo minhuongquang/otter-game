@@ -1,0 +1,29 @@
+# Godot project
+.godot/
+*.import
+*.translation
+*.fbx.meta
+*.glb.meta
+.letorrent
+
+# Editor
+.idea/
+*.kate-swp
+*.swp
+*.swo
+.vscode/
+*.code-workspace
+
+# Generated
+*.translation~
+export/
+translations/
+releases/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python helper (project bootstrap)
+_create_project.py

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" format=3]
+[resource]
+script = ExtResource("res://scripts/core/building_entry.gd")
+building_id = "verdant_inn"
+display_name = "Traveler's Rest Inn"
+description = "A cozy inn run by a retired adventurer."
+building_type = 1
+scene_path = "res://scenes/world/building_interior.tscn"
+required_flag = ""
+npc_ids = Array[String](["mia_innkeeper"])
+shop_id = ""
+save_point = true
+position_on_map = Vector2(300, 200)
