@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://cf4ddk7ei17y"]
+
+[node name="VNChoicePanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+anchor_left = 0.3
+anchor_top = 0.5
+anchor_right = 0.7
+anchor_bottom = 0.7
+mouse_filter = 2

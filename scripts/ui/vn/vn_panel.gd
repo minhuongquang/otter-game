@@ -1,8 +1,19 @@
 extends CanvasLayer
+class_name VNPanel
 
 ## Main UI controller for the Visual Novel scene.
 ## Manages background, character portraits, dialogue box, choices, and quick menu.
+## Also handles VNManager lifecycle and dialogue compilation.
 
+# === Constants ===
+const MAIN_MENU_PATH: String = "res://scenes/ui/main_menu.tscn"
+const PROLOGUE_DIALOGUE_ID: String = "prologue_001"
+const PROLOGUE_DIALOGUE_FILE: String = "res://database/dialogue/sample_prologue.dialogue"
+
+# === Exports ===
+@export var dialogue_id: String = PROLOGUE_DIALOGUE_ID
+
+# === @onready ===
 @onready var background: TextureRect = $VNBackground
 @onready var character_layer: Node2D = $VNCharacterLayer
 @onready var dialogue_box: Control = $VNDialogueBox
@@ -13,11 +24,13 @@ extends CanvasLayer
 @onready var quick_menu: HBoxContainer = $VNQuickMenu
 @onready var history_log: Panel = $VNHistoryLog
 
+# === Public ===
 var vn_manager: VNManager = null
 
-# Character portrait instances: character_id -> VNPortrait
-var _portraits: Dictionary = {}
+# === Private ===
+var _portraits: Dictionary = {}  # character_id -> VNPortrait
 
+# === Built-in ===
 func _ready() -> void:
 	# Listen to VN events
 	EventBus.listen("vn_change_background", _on_change_background)
@@ -34,6 +47,9 @@ func _ready() -> void:
 	choice_panel.hide()
 	history_log.hide()
 	next_indicator.hide()
+	
+	# Create VNManager and start dialogue
+	_setup_vn_manager()
 
 func _exit_tree() -> void:
 	EventBus.unlisten("vn_change_background", _on_change_background)
@@ -45,6 +61,77 @@ func _exit_tree() -> void:
 	EventBus.unlisten("vn_shake_camera", _on_shake_camera)
 	EventBus.unlisten("vn_fade", _on_fade)
 	EventBus.unlisten("vn_animation", _on_animation)
+
+func _input(event: InputEvent) -> void:
+	if vn_manager == null or not vn_manager.is_active:
+		return
+	
+	# Advance on click or Enter/Space
+	if event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
+		# Only advance if not in CHOICE state
+		if vn_manager.get_state() != 3:  # VNState.CHOICE
+			EventBus.emit_event("vn_advance", {})
+		get_viewport().set_input_as_handled()
+
+# === VNManager Lifecycle ===
+
+func _setup_vn_manager() -> void:
+	# Create VNManager as a child
+	vn_manager = VNManager.new()
+	add_child(vn_manager)
+	
+	# Set the VN panel reference
+	vn_manager.vn_panel = self
+	
+	# Connect to VNManager signals
+	vn_manager.vn_ended.connect(_on_vn_ended)
+	
+	# Compile and start dialogue
+	_compile_and_start()
+
+func _compile_and_start() -> void:
+	# Try to load compiled resource first
+	var resource: VNDialogueResource = Database.get_dialogue(dialogue_id)
+	
+	if resource == null:
+		# Fallback: compile the .dialogue file at runtime
+		resource = _compile_dialogue_file()
+	
+	if resource == null:
+		push_error("VNPanel: Could not load or compile dialogue: %s" % dialogue_id)
+		return
+	
+	# Start the dialogue
+	vn_manager.start_dialogue(dialogue_id)
+
+func _compile_dialogue_file() -> VNDialogueResource:
+	var compiler := VNScriptCompiler.new()
+	var resource: VNDialogueResource = compiler.compile_file(PROLOGUE_DIALOGUE_FILE)
+	
+	if resource == null:
+		push_error("VNPanel: Failed to compile dialogue file: %s" % PROLOGUE_DIALOGUE_FILE)
+		return null
+	
+	# Override the dialogue_id to match what we expect
+	resource.dialogue_id = dialogue_id
+	
+	# Save compiled resource for future use
+	var save_path: String = "res://database/dialogue/%s.tres" % dialogue_id
+	var dir := DirAccess.open("res://database/dialogue/")
+	if dir == null:
+		DirAccess.make_dir_recursive_absolute("res://database/dialogue/")
+	
+	var error := ResourceSaver.save(resource, save_path)
+	if error != OK:
+		push_warning("VNPanel: Could not save compiled dialogue: %s (error %d)" % [save_path, error])
+	
+	return resource
+
+func _on_vn_ended(_dialogue_id: String) -> void:
+	# Dialogue finished, return to main menu
+	SceneManager.change_scene(MAIN_MENU_PATH)
+
+# === UI Methods ===
 
 ## Set the VNManager reference.
 func set_manager(manager: VNManager) -> void:

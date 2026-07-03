@@ -10,7 +10,7 @@ signal settings_requested
 signal quit_requested
 
 # === Constants ===
-const FIRST_VN_PATH: String = "res://scenes/world/visual_novel.tscn"
+const FIRST_VN_PATH: String = "res://scenes/ui/vn/visual_novel.tscn"
 
 # === Built-in ===
 func _ready() -> void:

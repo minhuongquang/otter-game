@@ -2,7 +2,7 @@
 
 > **Purpose**: Track active development tasks, priorities, and assignees.  
 > **Type**: Living document — update as tasks change.  
-> **Last Updated**: 2026-06-30
+> **Last Updated**: 2026-07-03
 
 ---
 
@@ -15,59 +15,129 @@
 
 ---
 
-## Active Sprint
+## Phase 2 Overview
 
-### Priority 1 (This Week — COMPLETED)
+Phase 2 delivers ONE fully playable region demonstrating every core gameplay loop.
 
-| Task | Status | Assignee | Notes |
-|------|--------|----------|-------|
-| Set up project.godot configuration | ✅ DONE | AI | 7 autoloads, input map, display settings |
-| Create folder structure | ✅ DONE | AI | All folders created per docs |
-| Implement EventBus | ✅ DONE | AI | Core autoload |
-| Implement Database | ✅ DONE | AI | Lazy loading with cache |
-| Create Boot scene | ✅ DONE | AI | Splash + transition to main menu |
-| Create MainMenu scene | ✅ DONE | AI | New Game, Load, Settings, Quit |
-| Implement SaveManager | ✅ DONE | AI | JSON-based save/load |
-| Implement AudioManager | ✅ DONE | AI | BGM, SFX, bus management |
-| Implement InputManager | ✅ DONE | AI | Input context system |
-| Implement UIManager | ✅ DONE | AI | Screen stack, HUD, notifications |
-| Implement SceneManager | ✅ DONE | AI | Scene transitions, fades |
-| Core resource definitions | ✅ DONE | AI | 9 resource class definitions |
-| Architecture documentation | ✅ DONE | AI | 7 docs updated |
-| ADR-006 and ADR-007 | ✅ DONE | AI | SceneManager + Lazy Loading |
-| **Visual Novel Framework** | ✅ DONE | AI | Full VN system with 37 files |
+**11 milestones**, each ending with a playable improvement.  
+Each milestone is ~2-3 days of work.
 
-### Priority 2 (Completed — moved to VN Framework)
-
-| Task | Status | Assignee | Notes |
-|------|--------|----------|-------|
-| DialogueManager → VNManager | ✅ DONE | AI | Replaced with full VN framework |
-| VN scene scripts | ✅ DONE | AI | 20 command classes, compiler, state machine |
-| VN UI scripts | ✅ DONE | AI | Panel, portrait, typewriter, auto/skip, history |
-| VN documentation | ✅ DONE | AI | 3 docs: framework, script format, commands |
-| VN sample dialogue | ✅ DONE | AI | sample_prologue.dialogue with all command types |
-| Bug fixes | ✅ DONE | AI | 9 bugs fixed across core/managers/ui |
-
-### Priority 3 (Next)
-
-| Task | Status | Assignee | Notes |
-|------|--------|----------|-------|
-| Create VN scenes in Godot Editor | TODO | — | visual_novel.tscn, vn_portrait.tscn, etc. |
-| PlayerController + Exploration scene | TODO | — | Movement system |
-| BattleManager + Battle scene | TODO | — | Turn-based combat |
-| InventoryManager + UI | TODO | — | Item management |
-| QuestManager + Quest log | TODO | — | Quest lifecycle |
-| Create sample database resources | TODO | — | Items, enemies, characters |
-| Save/Load integration | TODO | — | Connect UI to SaveManager |
-| Settings screen | TODO | — | Audio, input, display settings |
+See [phase2_roadmap.md](phase2_roadmap.md) for full details.
 
 ---
 
-## In Progress
+## Active Milestone: M1 — "Boot to VN"
 
-| Task | Started | Progress | Notes |
-|------|---------|----------|-------|
-| — | — | — | — |
+**Goal**: Player boots the game, sees main menu, watches the prologue VN with text and choices.
+
+**Playable result**: Boot → Main Menu → Prologue VN (text, portraits, choices)
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 1.1 | Create `visual_novel.tscn` — root VN scene | ✅ DONE | `scenes/ui/vn/visual_novel.tscn` |
+| 1.2 | Create `vn_dialogue_box.tscn` — text display, name label, continue indicator | ✅ DONE | `scenes/ui/vn/vn_dialogue_box.tscn` |
+| 1.3 | Create `vn_portrait.tscn` — portrait container with side support | ✅ DONE | `scenes/ui/vn/vn_portrait.tscn` |
+| 1.4 | Create `vn_choice_menu.tscn` — choice button list | ✅ DONE | `scenes/ui/vn/vn_choice_menu.tscn` |
+| 1.5 | Wire Boot → Main Menu → VN → sample_prologue.dialogue | ✅ DONE | — |
+| 1.6 | Test full prologue playthrough | ✅ DONE | — |
+
+---
+
+## Upcoming Milestones
+
+### M2: "Walk" — Player Movement
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 2.1 | Create `player.tscn` (CharacterBody2D + Collision + Sprite + Camera) | ⬜ TODO | `scenes/characters/player.tscn` |
+| 2.2 | Implement `player_controller.gd` | ⬜ TODO | `scripts/world/player_controller.gd` |
+| 2.3 | Create `placeholder_map.tscn` | ⬜ TODO | `scenes/exploration/placeholder_map.tscn` |
+| 2.4 | Wire player input to InputManager | ⬜ TODO | — |
+| 2.5 | Create hero character resource | ⬜ TODO | `database/characters/hero.tres` |
+
+### M3: "Talk" — NPC Interaction → VN
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 3.1 | Create `interactable.gd` base class | ⬜ TODO | `scripts/components/interactable.gd` |
+| 3.2 | Create `npc.gd` (extends Interactable) | ⬜ TODO | `scripts/components/npc.gd` |
+| 3.3 | Create `npc.tscn` | ⬜ TODO | `scenes/characters/npc.tscn` |
+| 3.4 | Add interaction input to PlayerController | ⬜ TODO | — |
+| 3.5 | Create 2 sample NPCs + dialogue files | ⬜ TODO | 4 files |
+
+### M4: "World Flow" — Navigation Integration
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 4.1 | Wire VN end → WorldMap | ⬜ TODO | Wiring only |
+| 4.2 | Wire region selection → RegionHub | ⬜ TODO | Wiring only |
+| 4.3 | Wire building selection → BuildingInterior | ⬜ TODO | Wiring only |
+| 4.4 | Wire BuildingInterior → exploration map | ⬜ TODO | Wiring only |
+| 4.5 | Wire Exploration exit → RegionHub | ⬜ TODO | Wiring only |
+| 4.6 | Implement SceneManager pending data pattern | ⬜ TODO | — |
+
+### M5: "Fight" — Battle Foundation
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 5.1 | Implement `battle_manager.gd` | ⬜ TODO | `scripts/managers/battle_manager.gd` |
+| 5.2 | Implement `battle_actor.gd` | ⬜ TODO | `scripts/utilities/battle_actor.gd` |
+| 5.3 | Create 4 battle scenes | ⬜ TODO | 5 .tscn files |
+| 5.4 | Create manual encounter trigger | ⬜ TODO | — |
+| 5.5 | Create 2 enemies + 1 group + 1 skill | ⬜ TODO | 4 .tres files |
+
+### M6: "Fight Smarter" — Full Command Set
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 6.1 | Add Skill, Item, Guard, Flee commands | ⬜ TODO | Extends battle manager |
+| 6.2 | Expand damage calc (elements, crits, status) | ⬜ TODO | — |
+| 6.3 | Create 3 more skills | ⬜ TODO | 3 .tres files |
+
+### M7: "Loot" — Inventory + Rewards
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 7.1 | Implement `inventory_manager.gd` | ⬜ TODO | `scripts/managers/inventory_manager.gd` |
+| 7.2 | Create inventory + item slot scenes | ⬜ TODO | 2 .tscn files |
+| 7.3 | Wire victory rewards → inventory | ⬜ TODO | — |
+| 7.4 | Create 5 sample items | ⬜ TODO | 5 .tres files |
+
+### M8: "Goal" — Quest System
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 8.1 | Implement `quest_manager.gd` | ⬜ TODO | `scripts/managers/quest_manager.gd` |
+| 8.2 | Create `quest_log.tscn` | ⬜ TODO | `scenes/ui/quest_log.tscn` |
+| 8.3 | Wire quest events (dialogue, battle, collect, talk) | ⬜ TODO | — |
+| 8.4 | Create 2 sample quests | ⬜ TODO | 2 .tres files |
+
+### M9: "Remember" — Save/Load
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 9.1 | Create `save_screen.tscn` | ⬜ TODO | `scenes/ui/save_screen.tscn` |
+| 9.2 | Wire SaveManager to save screen | ⬜ TODO | — |
+| 9.3 | Verify all system serialization | ⬜ TODO | — |
+
+### M10: "Content" — Fill the Region
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 10.1 | Create full exploration map | ⬜ TODO | `verdant_forest.tscn` |
+| 10.2 | Expand prologue dialogue | ⬜ TODO | 50+ lines |
+| 10.3 | Town NPC dialogue | ⬜ TODO | 3+ files |
+| 10.4 | 3 more enemies, 5 more items, 1 more quest | ⬜ TODO | .tres files |
+| 10.5 | Add random encounters | ⬜ TODO | — |
+
+### M11: "Polish" — Edge Cases + Cleanup
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 11.1 | Settings screen (audio) | ⬜ TODO | `settings_screen.tscn` |
+| 11.2 | VN history + quick menu (if deferred) | ⬜ TODO | 2 .tscn files |
+| 11.3 | Edge case fixes | ⬜ TODO | Various |
+| 11.4 | Update documentation | ⬜ TODO | — |
 
 ---
 
@@ -76,8 +146,15 @@
 | Task | Completed | Notes |
 |------|-----------|-------|
 | Documentation system | 2026-06-28 | All core docs created |
+| Project setup (Godot 4.x) | 2026-06-28 | project.godot, imports, 7 autoloads |
+| Folder structure | 2026-06-28 | assets/, scripts/, scenes/, database/ |
+| Core autoloads | 2026-06-28 | EventBus, Database, Save, Audio, Input, UI, Scene |
+| Boot + Main Menu scene | 2026-06-28 | Splash, main menu, transitions |
+| Core resource definitions | 2026-06-28 | 9 resource classes |
 | Visual Novel Framework | 2026-06-30 | 37 files: commands, compiler, manager, UI, docs |
 | World Navigation System | 2026-07-01 | 21 files: NavigationManager, WorldMap, RegionHub, BuildingInterior, data structures, docs |
+| Sample world data | 2026-07-01 | 2 regions, 4 buildings, 1 shop, 2 region connections |
+| Phase 2 Roadmap | 2026-07-03 | 11-milestone plan in [phase2_roadmap.md](phase2_roadmap.md) |
 
 ---
 
@@ -103,24 +180,8 @@
 
 ---
 
-## Template for New Tasks
-
-```markdown
-### Task: [Name]
-
-**Description**: Brief description of what needs to be done.
-**Dependencies**: List of prerequisite tasks or issues.
-**Acceptance Criteria**:
-- [ ] Criterion 1
-- [ ] Criterion 2
-**Estimated Effort**: X hours/days
-**Assignee**: —
-```
-
----
-
 ## Related
 
 - [roadmap.md](roadmap.md) — Long-term milestones
+- [phase2_roadmap.md](phase2_roadmap.md) — Detailed Phase 2 implementation plan
 - [technical_debt.md](technical_debt.md) — Known issues
-- [decisions.md](decisions.md) — Design decisions

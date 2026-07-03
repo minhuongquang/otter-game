@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ccoctj50otm77"]
+
+[ext_resource type="Script" path="res://scripts/ui/vn/vn_portrait.gd" id="1"]
+
+[node name="VNPortrait" type="TextureRect"]
+script = ExtResource("1")
+layout_mode = 1
+custom_minimum_size = Vector2(400, 600)
+stretch_mode = 3
