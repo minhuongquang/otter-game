@@ -4,6 +4,10 @@ class_name VNPanel
 ## Main UI controller for the Visual Novel scene.
 ## Manages background, character portraits, dialogue box, choices, and quick menu.
 ## Also handles VNManager lifecycle and dialogue compilation.
+##
+## When the VN scene is instanced by an NPC interaction, VNManager (autoload)
+## is used instead of creating a local instance. On dialogue end, this panel
+## cleans itself up and restores the gameplay input context.
 
 # === Constants ===
 const MAIN_MENU_PATH: String = "res://scenes/ui/main_menu.tscn"
@@ -25,13 +29,17 @@ const PROLOGUE_DIALOGUE_FILE: String = "res://database/dialogue/sample_prologue.
 @onready var history_log: Panel = $VNHistoryLog
 
 # === Public ===
-var vn_manager: VNManager = null
+var vn_manager: Node = null
 
 # === Private ===
 var _portraits: Dictionary = {}  # character_id -> VNPortrait
+var _instanced_by_npc: bool = false  # true if launched by NPC (not boot/M1 flow)
 
 # === Built-in ===
 func _ready() -> void:
+	# Detect if this was launched by an NPC (has a parent scene already)
+	_instanced_by_npc = get_parent() != get_tree().root
+	
 	# Listen to VN events
 	EventBus.listen("vn_change_background", _on_change_background)
 	EventBus.listen("vn_show_character", _on_show_character)
@@ -48,7 +56,7 @@ func _ready() -> void:
 	history_log.hide()
 	next_indicator.hide()
 	
-	# Create VNManager and start dialogue
+	# Set up VN manager
 	_setup_vn_manager()
 
 func _exit_tree() -> void:
@@ -76,18 +84,20 @@ func _input(event: InputEvent) -> void:
 # === VNManager Lifecycle ===
 
 func _setup_vn_manager() -> void:
-	# Create VNManager as a child
-	vn_manager = VNManager.new()
-	add_child(vn_manager)
+	# Use the autoload VNManager
+	vn_manager = VNManager
 	
-	# Set the VN panel reference
+	# Set the VN panel reference so VNManager can update this UI
 	vn_manager.vn_panel = self
 	
 	# Connect to VNManager signals
-	vn_manager.vn_ended.connect(_on_vn_ended)
+	if not vn_manager.vn_ended.is_connected(_on_vn_ended):
+		vn_manager.vn_ended.connect(_on_vn_ended)
 	
-	# Compile and start dialogue
-	_compile_and_start()
+	# Start dialogue (for NPC-instanced, the NPC already called start_dialogue;
+	# for boot/main-menu flow, we compile and start here)
+	if not _instanced_by_npc:
+		_compile_and_start()
 
 func _compile_and_start() -> void:
 	# Try to load compiled resource first
@@ -128,13 +138,22 @@ func _compile_dialogue_file() -> VNDialogueResource:
 	return resource
 
 func _on_vn_ended(_dialogue_id: String) -> void:
-	# Dialogue finished, return to main menu
-	SceneManager.change_scene(MAIN_MENU_PATH)
+	# Disconnect from VNManager to avoid double-calls
+	if vn_manager != null and vn_manager.vn_ended.is_connected(_on_vn_ended):
+		vn_manager.vn_ended.disconnect(_on_vn_ended)
+	
+	if _instanced_by_npc:
+		# Return to gameplay: pop input context and remove this panel
+		InputManager.pop_context()
+		queue_free()
+	else:
+		# Boot/Main Menu flow: return to main menu
+		SceneManager.change_scene(MAIN_MENU_PATH)
 
 # === UI Methods ===
 
 ## Set the VNManager reference.
-func set_manager(manager: VNManager) -> void:
+func set_manager(manager: Node) -> void:
 	vn_manager = manager
 
 ## Update the dialogue display with current line data.

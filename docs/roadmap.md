@@ -88,22 +88,55 @@ Sample data is built alongside each system, not postponed to the end.
 - [x] Wire player input to InputManager context
 - [x] Create 1 sample character resource for the hero
 
-### Milestone 3: "Talk" — NPC Interaction → VN
+### Milestone 3.0: "Talk" — NPC Interaction → VN
 
 | | |
-REPLACE
 |---|---|
 | **Goal** | Player walks up to an NPC, presses interact, VN dialogue opens |
 | **Why now** | Bridges exploration to content. NPCs are how players receive quests, story, shops |
 | **Complexity** | Low |
+| **Reference** | `scripts/components/interactable.gd`, `scripts/world/player_controller.gd` |
 | **Playable result** | Walk → see NPC → press E → VN dialogue → choices → close |
 
+### Sub-milestone 3.1: Interaction Foundation ✅ DONE
+
 **Tasks**:
-- [ ] Create `interactable.gd` base class (Area2D, prompt, one_time, on_interact)
-- [ ] Create `npc.gd` (extends Interactable, dialogue_id, triggers VNManager)
-- [ ] Create `npc.tscn` (sprite, collision, interaction prompt)
-- [ ] Add interaction input to PlayerController
-- [ ] Create 2 sample NPCs + dialogue files
+- [x] Create `interactable.gd` base class (Area2D, prompt, one_time, can_interact, interact)
+- [x] Create `test_interactable.gd` (demo: prints "Interaction successful.")
+- [x] Add interaction detection + input to PlayerController
+- [x] Instance test interactable in placeholder map
+
+### Sub-milestone 3.2: NPC Subclass ✅ DONE
+
+**Tasks**:
+- [x] Create `npc.gd` (extends Interactable, exports dialogue_id)
+- [x] Create `npc.tscn` (Area2D + CollisionShape2D)
+- [x] Instance NPC in placeholder map with dialogue_id override
+
+### Sub-milestone 3.3: NPC → Visual Novel Integration ✅ DONE
+
+**Tasks**:
+- [x] Register VNManager as autoload in project.godot
+- [x] Wire NPC.interact() to VNManager.start_dialogue()
+- [x] Update VNPanel to use autoload VNManager, handle NPC return
+- [x] Disable player movement during VN via InputManager context
+
+### Sub-milestone 3.4: Player Interaction Input ✅ DONE
+
+**Tasks**:
+- [x] Review and verify interaction detection (nearest, single-press, range)
+- [x] Fix NPC context leak on dialogue start failure
+- [x] Validate all edge cases (no NPC, multiple, invalid, out of range, during dialogue)
+
+### Sub-milestone 3.5: Sample NPC Content ✅ DONE
+
+**Tasks**:
+- [x] Create Dialogue A (simple greeting, 1 line)
+- [x] Create Dialogue B (multi-line conversation, 3 lines)
+- [x] Add compile-on-demand fallback to NPC.gd
+- [x] Place both NPCs in placeholder map with unique dialogue_ids
+
+**Milestone M3 — "Talk" COMPLETE** 🎉
 
 ### Milestone 4: "World Flow" — Navigation Integration
 

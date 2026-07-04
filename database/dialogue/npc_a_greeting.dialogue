@@ -1,0 +1,8 @@
+[META]
+id: "npc_a_greeting"
+
+[CHARACTERS]
+npc = "res://database/characters/hero.tres"
+
+[SCRIPT]
+LINE npc "NPC A" neutral "Welcome, traveler! Care to rest a while?"

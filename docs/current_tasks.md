@@ -26,33 +26,26 @@ See [phase2_roadmap.md](phase2_roadmap.md) for full details.
 
 ---
 
-## Active Milestone: M2 — "Walk" (Player Movement)
+## Active Milestone: M3.5 — "Sample NPC Content"
 
-**Goal**: Player can move a character in a 2D space with camera following.
+**Goal**: Create sample content for testing the interaction and dialogue pipeline.
 
-**Playable result**: Walk around a simple map with camera following
+**Playable result**: Walk → press E near NPC A → greeting dialogue → walk to NPC B → multi-line dialogue
 
-| # | Task | Status | Files to Create |
+| # | Task | Status | Files to Create/Modify |
 |---|------|--------|-----------------|
-| 2.1 | Create `player.tscn` (CharacterBody2D + Collision + Sprite + Camera) | ✅ DONE | `scenes/characters/player.tscn` |
-| 2.2 | Implement `player_controller.gd` | ✅ DONE | `scripts/world/player_controller.gd` |
-| 2.3 | Create `placeholder_map.tscn` | ✅ DONE | `scenes/exploration/placeholder_map.tscn` |
-| 2.4 | Wire player input to InputManager | ✅ DONE | `autoload/input_manager.gd` |
-| 2.5 | Create hero character resource | ✅ DONE | `database/characters/hero.tres` |
+| 3.5.1 | Create Dialogue A (simple greeting) | ✅ DONE | `database/dialogue/npc_a_greeting.dialogue` |
+| 3.5.2 | Create Dialogue B (multi-line conversation) | ✅ DONE | `database/dialogue/npc_b_conversation.dialogue` |
+| 3.5.3 | Add compile-on-demand fallback to NPC.gd | ✅ DONE | `scripts/components/npc.gd` |
+| 3.5.4 | Place both NPCs in placeholder map with unique dialogue_ids | ✅ DONE | `scenes/exploration/placeholder_map.tscn` |
 
 ---
 
+## Milestone M3 Complete ✅
+
+All sub-milestones for M3 ("Talk") are done. The player can now walk up to an NPC and interact with dialogue.
+
 ## Upcoming Milestones
-
-### M3: "Talk" — NPC Interaction → VN
-
-| # | Task | Status | Files to Create |
-|---|------|--------|-----------------|
-| 3.1 | Create `interactable.gd` base class | ⬜ TODO | `scripts/components/interactable.gd` |
-| 3.2 | Create `npc.gd` (extends Interactable) | ⬜ TODO | `scripts/components/npc.gd` |
-| 3.3 | Create `npc.tscn` | ⬜ TODO | `scenes/characters/npc.tscn` |
-| 3.4 | Add interaction input to PlayerController | ⬜ TODO | — |
-| 3.5 | Create 2 sample NPCs + dialogue files | ⬜ TODO | 4 files |
 
 ### M4: "World Flow" — Navigation Integration
 

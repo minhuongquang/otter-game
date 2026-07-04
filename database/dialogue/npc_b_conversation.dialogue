@@ -1,0 +1,10 @@
+[META]
+id: "npc_b_conversation"
+
+[CHARACTERS]
+npc = "res://database/characters/hero.tres"
+
+[SCRIPT]
+LINE npc "NPC B" neutral "Hey there! Nice day for a walk, isn't it?"
+LINE npc "NPC B" smile "I've been all over this region. The views are breathtaking."
+LINE npc "NPC B" neutral "Well, enjoy your journey. I'll see you around!"

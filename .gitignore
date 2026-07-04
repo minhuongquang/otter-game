@@ -27,3 +27,6 @@ desktop.ini
 
 # Python helper (project bootstrap)
 _create_project.py
+
+# AI
+.ai/*

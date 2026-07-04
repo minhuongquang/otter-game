@@ -1,4 +1,3 @@
-class_name VNManager
 extends Node
 
 ## Main manager for the Visual Novel dialogue system.
