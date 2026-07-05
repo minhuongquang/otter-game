@@ -381,7 +381,7 @@ func _on_show_choices(data: Dictionary) -> void:
 	
 	# Create choice buttons
 	for i in range(choices.size()):
-		var choice_data: VNChoiceData = choices[i]
+		var choice_data: VNChoiceData = choices[i] as VNChoiceData
 		var button := Button.new()
 		button.text = choice_data.choice_text
 		button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -398,7 +398,7 @@ func _on_show_history(data: Dictionary) -> void:
 	# Get or create a content container inside the history panel
 	var container: VBoxContainer
 	if history_log.has_node("VBoxContainer"):
-		container = history_log.get_node("VBoxContainer")
+		container = history_log.get_node("VBoxContainer") as VBoxContainer
 	else:
 		container = VBoxContainer.new()
 		container.name = "VBoxContainer"
@@ -431,11 +431,11 @@ func _on_shake_camera(data: Dictionary) -> void:
 	
 	# Random shake
 	for i in range(10):
-		var offset := Vector2(
+		var shake_offset := Vector2(
 			randf_range(-intensity, intensity) * 10.0,
 			randf_range(-intensity, intensity) * 10.0
 		)
-		tween.tween_callback(func(): character_layer.position = original_pos + offset)
+		tween.tween_callback(func(): character_layer.position = original_pos + shake_offset)
 		tween.tween_interval(duration / 10.0)
 	
 	tween.tween_callback(func(): character_layer.position = original_pos)
@@ -501,7 +501,7 @@ func _get_position_for(position_name: String) -> Vector2:
 		_:
 			return Vector2(viewport_size.x * 0.5, viewport_size.y * 0.5)
 
-func _animate_node(node: Node, animation_id: String, params: Dictionary) -> void:
+func _animate_node(node: Node, animation_id: String, _params: Dictionary) -> void:
 	match animation_id:
 		"bounce":
 			var tween := create_tween()

@@ -2,7 +2,8 @@
 
 > **Purpose**: Document the Visual Novel dialogue system architecture, components, and data flow.  
 > **Scope**: VNManager, VNStateMachine, VNCommandExecutor, VNVariableStore, VNTypewriter, VNAutoSkip, VNHistory, VNScriptCompiler, and all VNCommand types.  
-> **Status**: Implemented.
+> **Status**: Implemented.  
+> **Last Updated**: 2026-07-05
 
 ---
 
@@ -68,7 +69,7 @@ VNScriptCompiler (RefCounted) — compiles .dialogue text → VNDialogueResource
 ### Manager Classes
 
 ```
-VNManager (Node, scene-based)
+VNManager (Node, autoload)
 ├── VNStateMachine (Node) — execution flow control
 ├── VNCommandExecutor (Node) — dispatches commands to handlers
 ├── VNVariableStore (RefCounted) — local variables + condition evaluation
@@ -213,7 +214,7 @@ Serialized data includes:
 | History | `scripts/managers/vn/vn_history.gd` |
 | UI panel | `scripts/ui/vn/vn_panel.gd` |
 | Dialogue scripts | `database/dialogue/*.dialogue` |
-| Compiled resources | `database/dialogue/compiled/*.tres` |
+| Compiled resources | `database/dialogue/compiled/*.tres` (generated on demand, not committed) |
 
 ---
 

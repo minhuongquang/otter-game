@@ -2,7 +2,8 @@
 
 > **Purpose**: Quick reference for all VN dialogue commands.  
 > **Scope**: All 20 built-in commands plus custom command registration.  
-> **Status**: Final.
+> **Status**: Final.  
+> **Last Updated**: 2026-07-05
 
 ---
 

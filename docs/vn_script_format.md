@@ -2,7 +2,8 @@
 
 > **Purpose**: Define the `.dialogue` script syntax for writers.  
 > **Scope**: All commands and syntax rules for creating VN dialogue scripts.  
-> **Status**: Final.
+> **Status**: Final.  
+> **Last Updated**: 2026-07-05
 
 ---
 

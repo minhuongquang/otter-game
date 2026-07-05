@@ -2,7 +2,7 @@
 
 > **Purpose**: Track active development tasks, priorities, and assignees.  
 > **Type**: Living document — update as tasks change.  
-> **Last Updated**: 2026-07-05
+> **Last Updated**: 2026-07-05 (M5.0.1–M5.0.4 complete)
 
 ---
 
@@ -50,15 +50,16 @@ All navigation wiring validated:
 
 | # | Task | Status | Files to Create |
 |---|------|--------|-----------------|
-| 5.0.1 | Create `BattleCommand` (RefCounted) | ⬜ TODO | `scripts/core/battle_command.gd` |
-| 5.0.2 | Create `BattleResult` (RefCounted) | ⬜ TODO | `scripts/core/battle_result.gd` |
-| 5.0.3 | Create `BattleActor` | ⬜ TODO | `scripts/battle/battle_actor.gd` |
-| 5.0.4 | Create `DamageCalculator` utility | ⬜ TODO | `scripts/utilities/damage_calculator.gd` |
-| 5.0.5 | Create `BattleStateMachine` | ⬜ TODO | `scripts/battle/battle_state_machine.gd` |
+| 5.0.1 | Create `BattleCommand` (RefCounted) | ✅ DONE | `scripts/core/battle_command.gd` |
+| 5.0.2 | Create `BattleResult` (RefCounted) | ✅ DONE | `scripts/core/battle_result.gd` |
+| 5.0.3 | Create `BattleActor` | ✅ DONE | `scripts/battle/battle_actor.gd` |
+| 5.0.4 | Create `DamageCalculator` utility | ✅ DONE | `scripts/utilities/damage_calculator.gd` |
+| 5.0.4a | Create shared `BattleEnums` | ✅ DONE | `scripts/battle/battle_enums.gd` |
+| 5.0.4b | Create `StatusEffect` | ✅ DONE | `scripts/battle/status_effect.gd` |
+| 5.0.5 | Create `BattleStateMachine` | ✅ DONE | `scripts/battle/battle_state_machine.gd` |
 | 5.0.6 | Create `TurnManager` | ⬜ TODO | `scripts/battle/turn_manager.gd` |
-| 5.0.7 | Create `BattleEvents` constants | ⬜ TODO | `scripts/battle/battle_events.gd` |
-| 5.0.8 | Create sample .tres files | ⬜ TODO | `database/enemies/slime_stats.tres`, `database/skills/basic_attack.tres`, `database/enemies/slime.tres`, `database/characters/hero.tres` |
-| 5.0.9 | Write DamageCalculator unit test | ⬜ TODO | `tests/test_battle/test_damage_calculator.gd` |
+| 5.0.7 | Create sample .tres files | ⬜ TODO | `database/enemies/slime_stats.tres`, `database/skills/basic_attack.tres`, `database/enemies/slime.tres`, `database/characters/hero.tres` |
+| 5.0.8 | Write DamageCalculator unit test | ⬜ TODO | `tests/test_battle/test_damage_calculator.gd` |
 
 ### M5.1 — Battle Simulation (headless)
 
@@ -168,6 +169,8 @@ All navigation wiring validated:
 | M2 — "Walk" (Player Movement) | 2026-07-03 | player.tscn, player_controller.gd, placeholder_map.tscn, hero.tres, InputManager wiring |
 | D1 — Main Menu Functionality | 2026-07-04 | New Game (reset flags + VN transition), Load (placeholder), Settings (BGM/SFX sliders + display mode), Quit (editor-safe), Test Room (sandbox with player movement) |
 | M5/M6 Architecture Review | 2026-07-05 | M5 split into 4 sub-milestones. M6 split into 4+1 (Item deferred to M7). 7 foundation classes planned, 3 components introduced (StateMachine, TurnManager, DamageCalculator) |
+| M5.0.1–M5.0.4 Battle Foundation | 2026-07-05 | 6 files created: BattleCommand, BattleResult, BattleActor, DamageCalculator, BattleEnums, StatusEffect. Typed with DamageCalcResult, TargetResult, StatModifier. Extensible array-based status, enum elements, computed stat getters. |
+| M5.0.5 BattleStateMachine | 2026-07-05 | RefCounted state machine with 10 states, 14 transitions, 2 signals. Includes BattleOutcome enum added to battle_enums.gd. No gameplay logic, no scene deps. |
 
 ---
 

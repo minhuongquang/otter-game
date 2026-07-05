@@ -174,13 +174,14 @@ Sample data is built alongside each system, not postponed to the end.
 | **Playable result** | Walk → press B (test trigger) → enter battle → Attack → win/lose → return to exploration |
 
 #### M5.0 — Foundation
-- [ ] Create `BattleCommand` (RefCounted) — `scripts/core/battle_command.gd`
-- [ ] Create `BattleResult` (RefCounted) — `scripts/core/battle_result.gd`
-- [ ] Create `BattleActor` — `scripts/battle/battle_actor.gd`
-- [ ] Create `DamageCalculator` utility — `scripts/utilities/damage_calculator.gd`
-- [ ] Create `BattleStateMachine` — `scripts/battle/battle_state_machine.gd`
+- [x] Create `BattleCommand` (RefCounted) — `scripts/core/battle_command.gd`
+- [x] Create `BattleResult` (RefCounted) — `scripts/core/battle_result.gd`
+- [x] Create `BattleActor` — `scripts/battle/battle_actor.gd`
+- [x] Create `DamageCalculator` utility — `scripts/utilities/damage_calculator.gd`
+- [x] Create `BattleEnums` constants — `scripts/battle/battle_enums.gd`
+- [x] Create `StatusEffect` — `scripts/battle/status_effect.gd`
+- [x] Create `BattleStateMachine` — `scripts/battle/battle_state_machine.gd`
 - [ ] Create `TurnManager` — `scripts/battle/turn_manager.gd`
-- [ ] Create `BattleEvents` constants — `scripts/battle/battle_events.gd`
 - [ ] Create sample .tres files (slime_stats, basic_attack, slime enemy, hero character)
 - [ ] Write DamageCalculator unit test
 
