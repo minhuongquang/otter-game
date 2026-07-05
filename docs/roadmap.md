@@ -170,33 +170,55 @@ Sample data is built alongside each system, not postponed to the end.
 |---|---|
 | **Goal** | Player encounters an enemy, enters battle, uses Attack, wins or loses |
 | **Why now** | Core gameplay loop. Everything after (quests, rewards) depends on battle |
-| **Complexity** | High |
+| **Complexity** | High — split into 4 sub-milestones |
 | **Playable result** | Walk → press B (test trigger) → enter battle → Attack → win/lose → return to exploration |
 
-**Tasks**:
-- [ ] Implement `battle_manager.gd` (state machine, AGI turn order, Attack command)
-- [ ] Implement `battle_actor.gd` (stat access, HP/SP management)
-- [ ] Create 4 battle scenes (root, command menu, party panel, enemy panel, battle log)
-- [ ] Create manual encounter trigger for testing
-- [ ] Create 2 sample enemies + 1 enemy group + 1 skill
-- [ ] Add party state to save data
+#### M5.0 — Foundation
+- [ ] Create `BattleCommand` (RefCounted) — `scripts/core/battle_command.gd`
+- [ ] Create `BattleResult` (RefCounted) — `scripts/core/battle_result.gd`
+- [ ] Create `BattleActor` — `scripts/battle/battle_actor.gd`
+- [ ] Create `DamageCalculator` utility — `scripts/utilities/damage_calculator.gd`
+- [ ] Create `BattleStateMachine` — `scripts/battle/battle_state_machine.gd`
+- [ ] Create `TurnManager` — `scripts/battle/turn_manager.gd`
+- [ ] Create `BattleEvents` constants — `scripts/battle/battle_events.gd`
+- [ ] Create sample .tres files (slime_stats, basic_attack, slime enemy, hero character)
+- [ ] Write DamageCalculator unit test
+
+#### M5.1 — Battle Simulation (headless)
+- [ ] Create Battle scene root — `scenes/battle/battle.tscn`
+- [ ] Implement BattleManager orchestrator
+- [ ] Implement basic enemy AI (Attack random)
+- [ ] Create manual encounter trigger (B key)
+- [ ] Implement victory/defeat + BattleResult emission
+- [ ] Wire EventBus emissions
+- [ ] Headless validation via console output
+
+#### M5.2 — Battle UI
+- [ ] Create stat bar component (reusable) — `scenes/ui/stat_bar.tscn`
+- [ ] Create PartyPanel, EnemyPanel, CommandMenu (Attack only), BattleLog
+- [ ] Create BattleUIController — `scripts/battle/battle_ui_controller.gd`
+
+#### M5.3 — Party Save State
+- [ ] Expand SaveManager._collect_save_data() with real party HP/SP/level
+- [ ] Expand SaveManager._apply_save_data() to restore party state
+- [ ] Wire autosave on battle victory
+- [ ] Manual save/load cycle test
 
 ### Milestone 6: "Fight Smarter" — Full Command Set
 
 | | |
 |---|---|
-| **Goal** | Full battle commands: Skills, Items, Guard, Flee |
-| **Why now** | Completes battle system before rewards integration |
+| **Goal** | Full battle commands: Skills, Guard, Flee. Item command deferred to M7 |
+| **Why now** | Completes battle commands before rewards integration. Items require InventoryManager (M7) |
 | **Complexity** | Medium |
-| **Playable result** | Full turn-based combat with all commands |
+| **Playable result** | Turn-based combat with Skill, Guard, Flee commands |
 
-**Tasks**:
-- [ ] Add Skill command (selection, SP cost, targeting, execution)
-- [ ] Add Item command (selection from inventory, execution)
-- [ ] Add Guard (50% damage reduction)
-- [ ] Add Flee (AGI-based success chance)
-- [ ] Expand damage calc (elemental multipliers, critical hits, status data)
-- [ ] Create 3 more skills (Heal, Fire, Guard Up)
+- [ ] **M6.0** — AGI Turn Order + Multi-Actor (upgrade TurnManager, second party member + enemy)
+- [ ] **M6.1** — Skill + Guard + Flee commands (SP cost, skill menu, guard flag, AGI flee chance)
+- [ ] **M6.2** — Item command 🔀 DEFERRED to M7 (requires InventoryManager)
+- [ ] **M6.3** — Expanded damage calc (elemental multipliers, critical hits, variance, guard reduction)
+- [ ] **M6.4** — Status effects + advanced AI (poison/sleep/burn, aggressive AI type)
+- [ ] Create 3 more skills (Heal, Fireball, Guard Up)
 
 ### Milestone 7: "Loot" — Inventory + Rewards
 

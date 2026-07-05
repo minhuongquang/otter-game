@@ -2,7 +2,7 @@
 
 > **Purpose**: Track active development tasks, priorities, and assignees.  
 > **Type**: Living document — update as tasks change.  
-> **Last Updated**: 2026-07-03
+> **Last Updated**: 2026-07-05
 
 ---
 
@@ -44,21 +44,63 @@ All navigation wiring validated:
 
 ## Active Milestone: M5 — "Fight" (Battle Foundation)
 
+**Architecture review complete** (2026-07-05). M5 split into 4 sub-milestones ordered by dependency.
+
+### M5.0 — Foundation
+
 | # | Task | Status | Files to Create |
 |---|------|--------|-----------------|
-| 5.1 | Implement `battle_manager.gd` | ⬜ TODO | `scripts/managers/battle_manager.gd` |
-| 5.2 | Implement `battle_actor.gd` | ⬜ TODO | `scripts/utilities/battle_actor.gd` |
-| 5.3 | Create 4 battle scenes | ⬜ TODO | 5 .tscn files |
-| 5.4 | Create manual encounter trigger | ⬜ TODO | — |
-| 5.5 | Create 2 enemies + 1 group + 1 skill | ⬜ TODO | 4 .tres files |
+| 5.0.1 | Create `BattleCommand` (RefCounted) | ⬜ TODO | `scripts/core/battle_command.gd` |
+| 5.0.2 | Create `BattleResult` (RefCounted) | ⬜ TODO | `scripts/core/battle_result.gd` |
+| 5.0.3 | Create `BattleActor` | ⬜ TODO | `scripts/battle/battle_actor.gd` |
+| 5.0.4 | Create `DamageCalculator` utility | ⬜ TODO | `scripts/utilities/damage_calculator.gd` |
+| 5.0.5 | Create `BattleStateMachine` | ⬜ TODO | `scripts/battle/battle_state_machine.gd` |
+| 5.0.6 | Create `TurnManager` | ⬜ TODO | `scripts/battle/turn_manager.gd` |
+| 5.0.7 | Create `BattleEvents` constants | ⬜ TODO | `scripts/battle/battle_events.gd` |
+| 5.0.8 | Create sample .tres files | ⬜ TODO | `database/enemies/slime_stats.tres`, `database/skills/basic_attack.tres`, `database/enemies/slime.tres`, `database/characters/hero.tres` |
+| 5.0.9 | Write DamageCalculator unit test | ⬜ TODO | `tests/test_battle/test_damage_calculator.gd` |
+
+### M5.1 — Battle Simulation (headless)
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 5.1.1 | Create Battle scene root | ⬜ TODO | `scenes/battle/battle.tscn` |
+| 5.1.2 | Implement BattleManager orchestrator | ⬜ TODO | `scripts/battle/battle_manager.gd` |
+| 5.1.3 | Implement basic enemy AI | ⬜ TODO | `scripts/battle/enemy_ai.gd` |
+| 5.1.4 | Create manual encounter trigger (B key) | ⬜ TODO | — |
+| 5.1.5 | Implement victory/defeat + BattleResult emission | ⬜ TODO | — |
+| 5.1.6 | Wire EventBus emissions | ⬜ TODO | — |
+| 5.1.7 | Headless validation via console | ⬜ TODO | — |
+
+### M5.2 — Battle UI
+
+| # | Task | Status | Files to Create |
+|---|------|--------|-----------------|
+| 5.2.1 | Create stat bar component (reusable) | ⬜ TODO | `scenes/ui/stat_bar.tscn` |
+| 5.2.2 | Create PartyPanel | ⬜ TODO | `scenes/battle/party_panel.tscn` |
+| 5.2.3 | Create EnemyPanel | ⬜ TODO | `scenes/battle/enemy_panel.tscn` |
+| 5.2.4 | Create CommandMenu (Attack only) | ⬜ TODO | `scenes/battle/command_menu.tscn` |
+| 5.2.5 | Create BattleLog | ⬜ TODO | `scenes/battle/battle_log.tscn` |
+| 5.2.6 | Create BattleUIController | ⬜ TODO | `scripts/battle/battle_ui_controller.gd` |
+
+### M5.3 — Party Save State
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 5.3.1 | Expand SaveManager._collect_save_data() | ⬜ TODO | Read actual party HP/SP/level |
+| 5.3.2 | Expand SaveManager._apply_save_data() | ⬜ TODO | Restore party state on load |
+| 5.3.3 | Wire autosave on battle victory | ⬜ TODO | — |
+| 5.3.4 | Manual save/load cycle test | ⬜ TODO | — |
 
 ### M6: "Fight Smarter" — Full Command Set
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 6.1 | Add Skill, Item, Guard, Flee commands | ⬜ TODO | Extends battle manager |
-| 6.2 | Expand damage calc (elements, crits, status) | ⬜ TODO | — |
-| 6.3 | Create 3 more skills | ⬜ TODO | 3 .tres files |
+| 6.0 | AGI Turn Order + Multi-Actor | ⬜ TODO | Upgrade TurnManager, second party member + enemy |
+| 6.1 | Skill + Guard + Flee commands | ⬜ TODO | SP cost, skill menu, guard flag, flee chance |
+| 6.2 | Item command | 🔀 DEFERRED | Requires InventoryManager from M7 |
+| 6.3 | Expanded damage calc | ⬜ TODO | Elements, crits, variance, guard reduction |
+| 6.4 | Status effects + advanced AI | ⬜ TODO | Poison/sleep/burn, aggressive AI type |
 
 ### M7: "Loot" — Inventory + Rewards
 
@@ -67,7 +109,8 @@ All navigation wiring validated:
 | 7.1 | Implement `inventory_manager.gd` | ⬜ TODO | `scripts/managers/inventory_manager.gd` |
 | 7.2 | Create inventory + item slot scenes | ⬜ TODO | 2 .tscn files |
 | 7.3 | Wire victory rewards → inventory | ⬜ TODO | — |
-| 7.4 | Create 5 sample items | ⬜ TODO | 5 .tres files |
+| 7.4 | Wire item usage (inventory screen + battle item command) | ⬜ TODO | Includes M6.2 Item command |
+| 7.5 | Create 5 sample items | ⬜ TODO | 5 .tres files |
 
 ### M8: "Goal" — Quest System
 
@@ -124,6 +167,7 @@ All navigation wiring validated:
 | M1 — "Boot to VN" | 2026-07-03 | 4 VN scenes, boot → main menu → VN flow |
 | M2 — "Walk" (Player Movement) | 2026-07-03 | player.tscn, player_controller.gd, placeholder_map.tscn, hero.tres, InputManager wiring |
 | D1 — Main Menu Functionality | 2026-07-04 | New Game (reset flags + VN transition), Load (placeholder), Settings (BGM/SFX sliders + display mode), Quit (editor-safe), Test Room (sandbox with player movement) |
+| M5/M6 Architecture Review | 2026-07-05 | M5 split into 4 sub-milestones. M6 split into 4+1 (Item deferred to M7). 7 foundation classes planned, 3 components introduced (StateMachine, TurnManager, DamageCalculator) |
 
 ---
 

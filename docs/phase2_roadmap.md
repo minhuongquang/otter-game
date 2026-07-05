@@ -2,7 +2,7 @@
 
 > **Purpose**: Detailed implementation plan for Phase 2 (Prototype).  
 > **Type**: Living document — update as milestones are completed.  
-> **Last Updated**: 2026-07-03
+> **Last Updated**: 2026-07-05
 
 ---
 
@@ -258,109 +258,169 @@ Already exists: 2 regions, 4 buildings, 1 shop, 2 region connections
 
 **Playable result**: Walk → press B (test trigger) → enter battle → Attack → win/lose → return to exploration
 
-### Tasks
+**Note**: Architecture review completed 2026-07-05. M5 split into 4 sub-milestones ordered by dependency.
+
+### Sub-milestone 5.0: Foundation
 
 | # | Task | Files to Create | Files to Modify |
 |---|------|----------------|-----------------|
-| 5.1 | Implement `battle_manager.gd` — state machine, AGI turn order, Attack command | `scripts/managers/battle_manager.gd` | — |
-| 5.2 | Implement `battle_actor.gd` — stat access, HP/SP management | `scripts/utilities/battle_actor.gd` | — |
-| 5.3 | Create `battle.tscn` — root battle scene | `scenes/battle/battle.tscn` | — |
-| 5.4 | Create `battle_command_menu.tscn` — Attack button | `scenes/battle/battle_command_menu.tscn` | — |
-| 5.5 | Create `battle_party_panel.tscn` — party HP bars | `scenes/battle/battle_party_panel.tscn` | — |
-| 5.6 | Create `battle_enemy_panel.tscn` — enemy sprites + HP | `scenes/battle/battle_enemy_panel.tscn` | — |
-| 5.7 | Create `battle_log.tscn` — action text display | `scenes/battle/battle_log.tscn` | — |
-| 5.8 | Create manual encounter trigger (press B in exploration) | — | `scripts/world/player_controller.gd` |
-| 5.9 | Create 2 sample enemies + 1 enemy group | `database/enemies/slime.tres`, `database/enemies/goblin.tres`, `database/enemies/group_forest.tres` | — |
-| 5.10 | Create 1 sample skill (Attack) | `database/skills/attack.tres` | — |
-| 5.11 | Add party state to save data | — | `autoload/save_manager.gd` |
+| 5.0.1 | Create `BattleCommand` (RefCounted) — action_type, actor/target/skill/item IDs | `scripts/core/battle_command.gd` | — |
+| 5.0.2 | Create `BattleResult` (RefCounted) — result_type, exp, gold, drops, survivors | `scripts/core/battle_result.gd` | — |
+| 5.0.3 | Create `BattleActor` — runtime HP/SP/guard/status wrapper | `scripts/battle/battle_actor.gd` | — |
+| 5.0.4 | Create `DamageCalculator` utility — static physical/magical damage functions | `scripts/utilities/damage_calculator.gd` | — |
+| 5.0.5 | Create `BattleStateMachine` — INITIALIZE → PLAYER_PHASE → EXECUTE → ENEMY_PHASE → CHECK → VICTORY/DEFEAT/CLEANUP | `scripts/battle/battle_state_machine.gd` | — |
+| 5.0.6 | Create `TurnManager` — get_next_actor(), is_round_complete(), advance_turn() (alternating in M5) | `scripts/battle/turn_manager.gd` | — |
+| 5.0.7 | Create `BattleEvents` constants — typed event names for all battle events | `scripts/battle/battle_events.gd` | — |
+| 5.0.8 | Create sample .tres files (slime_stats, basic_attack skill, slime enemy, hero character) | `database/enemies/slime_stats.tres`, `database/skills/basic_attack.tres`, `database/enemies/slime.tres`, `database/characters/hero.tres` | — |
+| 5.0.9 | Write DamageCalculator unit test | `tests/test_battle/test_damage_calculator.gd` | — |
+
+### Sub-milestone 5.1: Battle Simulation (headless, console-validated)
+
+| # | Task | Files to Create | Files to Modify |
+|---|------|----------------|-----------------|
+| 5.1.1 | Create Battle scene root (minimal, no UI children) | `scenes/battle/battle.tscn` | — |
+| 5.1.2 | Implement BattleManager orchestrator — wires StateMachine + TurnManager + DamageCalc + AI | `scripts/battle/battle_manager.gd` | — |
+| 5.1.3 | Implement basic enemy AI — `basic` type: Attack random party member | `scripts/battle/enemy_ai.gd` | — |
+| 5.1.4 | Create manual encounter trigger (B key in exploration) | — | `scripts/world/player_controller.gd` |
+| 5.1.5 | Implement victory/defeat + BattleResult emission via EventBus | — | `scripts/battle/battle_manager.gd` |
+| 5.1.6 | Wire EventBus emissions (battle_started, battle_victory, action_executed, actor_damaged, actor_defeated, battle_defeat) | — | `scripts/battle/battle_manager.gd` |
+| 5.1.7 | Headless validation — full combat loop verified via console print() before any UI exists | — | — |
+
+### Sub-milestone 5.2: Battle UI
+
+| # | Task | Files to Create | Files to Modify |
+|---|------|----------------|-----------------|
+| 5.2.1 | Create stat bar component (reusable HP/SP bar with fill + label) | `scenes/ui/stat_bar.tscn` | — |
+| 5.2.2 | Create PartyPanel (party HP/SP via stat bars) | `scenes/battle/party_panel.tscn` | — |
+| 5.2.3 | Create EnemyPanel (enemy HP bars) | `scenes/battle/enemy_panel.tscn` | — |
+| 5.2.4 | Create CommandMenu (Attack button only for M5) | `scenes/battle/command_menu.tscn` | — |
+| 5.2.5 | Create BattleLog (on-screen scrolling text, replaces console print()) | `scenes/battle/battle_log.tscn` | — |
+| 5.2.6 | Create BattleUIController — listens to BattleManager signals, updates panels/log | `scripts/battle/battle_ui_controller.gd` | — |
+
+### Sub-milestone 5.3: Party Save State
+
+| # | Task | Files to Create | Files to Modify |
+|---|------|----------------|-----------------|
+| 5.3.1 | Expand `SaveManager._collect_save_data()` — read actual party HP/SP/level | — | `autoload/save_manager.gd` |
+| 5.3.2 | Expand `SaveManager._apply_save_data()` — restore party state on load | — | `autoload/save_manager.gd` |
+| 5.3.3 | Wire autosave on battle victory | — | `scripts/battle/battle_manager.gd` |
+| 5.3.4 | Manual save/load cycle test | — | — |
 
 ### Dependencies
 
 - Milestone 4 (world flow to reach battle trigger)
 - Milestone 2 (exploration scene for encounter)
-- EnemyResource (exists)
-- SkillResource (exists)
-
-### Save Integration
-
-```gdscript
-# In SaveManager
-func get_party_data() -> Dictionary:
-    return {
-        "members": [
-            {
-                "character_id": "hero",
-                "hp": 100,
-                "sp": 50,
-                "level": 1,
-                "exp": 0
-            }
-        ]
-    }
-```
+- EnemyResource, SkillResource, StatsResource, CharacterResource (exist)
+- EventBus, SaveManager, SceneManager (exist)
 
 ### Sample Data
 
-- 2 enemy resources (Slime, Goblin)
-- 1 enemy group resource
-- 1 skill resource (Attack)
+- 1 StatsResource (slime_stats)
+- 1 SkillResource (basic_attack)
+- 1 EnemyResource (slime)
+- 1 CharacterResource (hero)
 
 ### Validation
 
 - [ ] Pressing B in exploration starts battle
 - [ ] Battle scene loads with party and enemies
-- [ ] Turn order displays correctly
-- [ ] Attack command deals damage
+- [ ] Single-actor alternating turn order works
+- [ ] Attack command deals correct damage (verified by unit test)
 - [ ] Enemy attacks back
-- [ ] Victory screen appears when all enemies defeated
-- [ ] Defeat screen appears when all party down
-- [ ] Returning to exploration works after battle
+- [ ] All enemies defeated → BattleResult(VICTORY) emitted → return to exploration
+- [ ] Party wiped → BattleResult(DEFEAT) emitted → game over
+- [ ] HP bars update visually
+- [ ] BattleLog shows all actions
+- [ ] Party HP/SP persists after save → quit → load
 
 ---
 
 ## Milestone 6: "Fight Smarter" — Full Command Set
 
-**Goal**: Full battle commands: Skills, Items, Guard, Flee.
+**Goal**: Full battle commands: Skills, Guard, Flee. Item command deferred to M7.
 
-**Why now**: Completes battle system before rewards integration.
+**Why now**: Completes battle commands before rewards integration. Items require InventoryManager from M7.
 
 **Complexity**: Medium
 
-**Playable result**: Full turn-based combat with all commands
+**Playable result**: Turn-based combat with Skill, Guard, Flee commands
 
-### Tasks
+### Sub-milestone 6.0: AGI Turn Order + Multi-Actor
 
 | # | Task | Files to Create | Files to Modify |
 |---|------|----------------|-----------------|
-| 6.1 | Add Skill command (selection, SP cost, targeting, execution) | — | `scripts/managers/battle_manager.gd`, `scenes/battle/battle_command_menu.tscn` |
-| 6.2 | Add Item command (selection from inventory, execution) | — | `scripts/managers/battle_manager.gd`, `scenes/battle/battle_command_menu.tscn` |
-| 6.3 | Add Guard (50% damage reduction) | — | `scripts/managers/battle_manager.gd` |
-| 6.4 | Add Flee (AGI-based success chance) | — | `scripts/managers/battle_manager.gd` |
-| 6.5 | Expand damage calc (elemental multipliers, critical hits, status data structures) | — | `scripts/managers/battle_manager.gd` |
-| 6.6 | Create 3 more skills (Heal, Fire, Guard Up) | `database/skills/heal.tres`, `database/skills/fire.tres`, `database/skills/guard_up.tres` | — |
+| 6.0.1 | Upgrade TurnManager — replace alternating with AGI-descending sort | — | `scripts/battle/turn_manager.gd` |
+| 6.0.2 | Support multiple party members — BattleManager iterates all party actors | — | `scripts/battle/battle_manager.gd` |
+| 6.0.3 | Support multiple enemies — TurnManager includes enemies in order | — | `scripts/battle/turn_manager.gd` |
+| 6.0.4 | Create second party member .tres | `database/characters/ally.tres` | — |
+| 6.0.5 | Create second enemy .tres | `database/enemies/goblin.tres` | — |
+| 6.0.6 | Update UI — CommandMenu highlights current actor name | — | `scenes/battle/command_menu.tscn` |
+
+### Sub-milestone 6.1: Skill + Guard + Flee
+
+| # | Task | Files to Create | Files to Modify |
+|---|------|----------------|-----------------|
+| 6.1.1 | Add Skill command — read skills from CharacterResource, SP cost check, target selection | — | `scripts/battle/battle_manager.gd` |
+| 6.1.2 | Create skill submenu | `scenes/battle/skill_menu.tscn` | — |
+| 6.1.3 | Add Guard command — set is_guarding flag (reduction wired in 6.3) | — | `scripts/battle/battle_manager.gd` |
+| 6.1.4 | Add Flee command — AGI ratio chance, ESCAPE state in StateMachine, BattleResult(ESCAPE) | — | `scripts/battle/battle_manager.gd`, `scripts/battle/battle_state_machine.gd` |
+| 6.1.5 | Update CommandMenu — wire all buttons (Skill=2, Guard=3, Item=4 shows disabled, Flee=5) | — | `scenes/battle/command_menu.tscn` |
+
+### Sub-milestone 6.2: Item Command — 🔀 DEFERRED TO M7
+
+Requires InventoryManager from M7. M7 task 7.5 ("Wire item usage (inventory screen + battle item command)") covers this.
+
+### Sub-milestone 6.3: Expanded Damage Calculation
+
+| # | Task | Files to Create | Files to Modify |
+|---|------|----------------|-----------------|
+| 6.3.1 | Add elemental multipliers to DamageCalculator (2x weakness, 0.5x resist, 0x null) | — | `scripts/utilities/damage_calculator.gd` |
+| 6.3.2 | Add critical hits (LUK / 256 chance, 1.5x multiplier) | — | `scripts/utilities/damage_calculator.gd` |
+| 6.3.3 | Add damage variance (±10% random spread) | — | `scripts/utilities/damage_calculator.gd` |
+| 6.3.4 | Add Guard reduction (damage * 0.5 when defender.is_guarding) | — | `scripts/utilities/damage_calculator.gd` |
+| 6.3.5 | Create skill .tres files | `database/skills/fireball.tres`, `database/skills/heal.tres`, `database/skills/guard_up.tres` | — |
+| 6.3.6 | Write DamageCalculator unit tests (elemental, critical, guard, variance branches) | — | `tests/test_battle/test_damage_calculator.gd` |
+
+### Sub-milestone 6.4: Status Effects + Advanced AI
+
+| # | Task | Files to Create | Files to Modify |
+|---|------|----------------|-----------------|
+| 6.4.1 | Create status effect system — apply/tick/expire for poison, sleep, burn, etc. | `scripts/battle/status_effects.gd` | — |
+| 6.4.2 | Add STATUS_TICK state to StateMachine (between EXECUTE and CHECK) | — | `scripts/battle/battle_state_machine.gd` |
+| 6.4.3 | Expand enemy AI module — `basic`: Attack random, `aggressive`: target lowest HP | — | `scripts/battle/enemy_ai.gd` |
+| 6.4.4 | Wire status effects into damage flow — DamageCalculator returns status_to_apply, BattleManager applies it | — | `scripts/battle/battle_manager.gd`, `scripts/utilities/damage_calculator.gd` |
 
 ### Dependencies
 
 - Milestone 5 (battle foundation)
+- DamageCalculator (from M5.0)
+- StateMachine (from M5.0)
+- TurnManager (from M5.0)
 
 ### Save Integration
 
-None — battle state doesn't persist.
+None — battle state doesn't persist between sessions.
 
 ### Sample Data
 
-- 3 skill resources (Heal, Fire, Guard Up)
+- 1 CharacterResource (ally)
+- 1 EnemyResource (goblin)
+- 3 SkillResources (Fireball, Heal, Guard Up)
 
 ### Validation
 
-- [ ] Skill menu shows available skills
+- [ ] Turn order sorted by AGI descending
+- [ ] Multiple party members each get a turn
+- [ ] Multiple enemies each get a turn
+- [ ] Skill menu shows available skills with SP costs
 - [ ] Selecting a skill with insufficient SP shows error
-- [ ] Skills deal correct damage/healing
-- [ ] Item menu shows available items
-- [ ] Using item in battle works
+- [ ] Skills deal correct damage/healing with elemental modifiers
 - [ ] Guard reduces incoming damage by 50%
-- [ ] Flee succeeds/fails based on AGI
-- [ ] All commands work in correct turn order
+- [ ] Flee succeeds/fails based on AGI ratio (0.1–0.9 range)
+- [ ] Critical hits trigger at LUK-based rate with 1.5x damage
+- [ ] Damage varies by ±10%
+- [ ] Status effects tick at end of round and expire correctly
+- [ ] Aggressive AI targets lowest-HP party member
 
 ---
 
@@ -381,14 +441,15 @@ None — battle state doesn't persist.
 | 7.1 | Implement `inventory_manager.gd` — add/remove/use/equip/currency | `scripts/managers/inventory_manager.gd` | — |
 | 7.2 | Create `inventory_screen.tscn` — item grid, category tabs, detail panel | `scenes/ui/inventory_screen.tscn` | — |
 | 7.3 | Create `item_slot.tscn` — icon, quantity, rarity border | `scenes/ui/item_slot.tscn` | — |
-| 7.4 | Wire victory rewards (EXP → level, currency → wallet, items → inventory) | — | `scripts/managers/battle_manager.gd` |
-| 7.5 | Wire item usage (inventory screen + battle item command) | — | `scripts/managers/inventory_manager.gd`, `scripts/managers/battle_manager.gd` |
+| 7.4 | Wire victory rewards (EXP → level, currency → wallet, items → inventory via BattleResult) | — | `scripts/battle/battle_manager.gd` |
+| 7.5 | Wire item usage in battle (M6.2 Item command) — consumable selection, target, execution | — | `scripts/managers/inventory_manager.gd`, `scripts/battle/battle_manager.gd` |
 | 7.6 | Create 5 sample items | `database/items/potion.tres`, `database/items/hi_potion.tres`, `database/items/antidote.tres`, `database/items/iron_sword.tres`, `database/items/leather_armor.tres` | — |
 | 7.7 | Add inventory data to SaveManager | — | `autoload/save_manager.gd` |
 
 ### Dependencies
 
 - Milestone 6 (full battle for reward testing)
+- BattleResult (from M5.0 — rewards code consumes typed BattleResult)
 - ItemResource (exists)
 
 ### Save Integration
@@ -417,13 +478,14 @@ func get_inventory_data() -> Dictionary:
 
 ### Validation
 
-- [ ] Battle victory grants EXP, currency, items
+- [ ] Battle victory grants EXP, currency, items (via BattleResult)
 - [ ] EXP accumulates and levels up character
 - [ ] Currency displays correctly
 - [ ] Inventory screen opens with correct items
 - [ ] Category tabs filter items correctly
 - [ ] Item detail panel shows name, description, stats
-- [ ] Using a consumable removes it from inventory
+- [ ] Using a consumable in battle removes it from inventory
+- [ ] Using a consumable from inventory screen works
 - [ ] Equipping weapon changes stats
 - [ ] Unequipping works
 - [ ] Inventory persists after save/load
@@ -447,7 +509,7 @@ func get_inventory_data() -> Dictionary:
 | 8.1 | Implement `quest_manager.gd` — lifecycle, stage advancement, objective tracking | `scripts/managers/quest_manager.gd` | — |
 | 8.2 | Create `quest_log.tscn` — quest list, detail, objectives, rewards | `scenes/ui/quest_log.tscn` | — |
 | 8.3 | Wire VN dialogue → quest accept/complete | — | `scripts/managers/vn/vn_command_executor.gd` |
-| 8.4 | Wire battle defeat → quest objective update | — | `scripts/managers/battle_manager.gd` |
+| 8.4 | Wire battle defeat → quest objective update (reads BattleResult.defeated_enemies) | — | `scripts/managers/battle_manager.gd` |
 | 8.5 | Wire item collect → quest objective update | — | `scripts/managers/inventory_manager.gd` |
 | 8.6 | Wire NPC talk → quest objective update | — | `scripts/components/npc.gd` |
 | 8.7 | Create 2 sample quests | `database/quests/prologue_main.tres`, `database/quests/herb_gathering.tres` | — |
@@ -456,7 +518,7 @@ func get_inventory_data() -> Dictionary:
 ### Dependencies
 
 - Milestone 7 (quest rewards → inventory)
-- Milestone 5 (defeat objectives)
+- Milestone 5 (defeat objectives — reads BattleResult)
 - Milestone 3 (talk objectives)
 - Milestone 4 (reach objectives)
 - QuestResource (exists)
@@ -489,7 +551,7 @@ func get_quest_data() -> Dictionary:
 - [ ] NPC dialogue offers quest accept
 - [ ] Accepting quest adds it to quest log
 - [ ] Quest log shows active quests with objectives
-- [ ] Defeating enemies updates defeat objective counter
+- [ ] Defeating enemies updates defeat objective counter (via BattleResult)
 - [ ] Collecting items updates collect objective counter
 - [ ] Talking to NPC updates talk objective counter
 - [ ] All objectives complete → quest ready to turn in
@@ -642,19 +704,22 @@ This milestone wires the UI. The serialization code already exists from previous
 | 2 | `feat: implement player controller and placeholder map` | player_controller.gd, player.tscn, placeholder_map.tscn |
 | 3 | `feat: implement interactable base and NPC interaction` | interactable.gd, npc.gd, npc.tscn, 2 dialogue files |
 | 4 | `feat: wire world navigation flow` | SceneManager wires only |
-| 5 | `feat: implement battle foundation with Attack command` | battle_manager.gd, battle_actor.gd, 4 battle scenes |
-| 6 | `feat: add Skills, Items, Guard, Flee to battle` | Extends battle manager + scene |
-| 7 | `feat: create sample enemies and enemy groups` | 2 .tres enemies + 1 group |
-| 8 | `feat: implement inventory manager and rewards wiring` | inventory_manager.gd, 2 inventory scenes |
-| 9 | `feat: create sample items` | 5 .tres items |
-| 10 | `feat: implement quest manager with objective tracking` | quest_manager.gd, quest_log.tscn |
-| 11 | `feat: create sample quests with event wiring` | 2 .tres quests, dialogue event tests |
-| 12 | `feat: implement save/load screen and end-to-end persistence` | save_screen.tscn, serialization validation |
-| 13 | `feat: create full verdant forest exploration map` | verdant_forest.tscn + expanded NPC/content |
-| 14 | `feat: add settings screen (audio)` | settings_screen.tscn |
-| 15 | `feat: add VN history panel and quick menu scenes` | 2 .tscn files |
-| 16 | `fix: edge case handling and bug fixes` | Various |
-| 17 | `chore: update documentation for Phase 2` | Docs |
+| 5 | `feat: implement battle foundation classes` | battle_command.gd, battle_result.gd, battle_actor.gd, damage_calculator.gd, state_machine.gd, turn_manager.gd, battle_events.gd, sample .tres files |
+| 6 | `feat: implement battle simulation with Attack command` | battle.tscn, battle_manager.gd, enemy_ai.gd |
+| 7 | `feat: add battle UI (panels, log, command menu)` | 5 battle scenes, battle_ui_controller.gd, stat_bar.tscn |
+| 8 | `feat: add party save state to SaveManager` | SaveManager expansion |
+| 9 | `feat: add AGI turn order and multi-actor support` | TurnManager upgrade, ally.tres, goblin.tres |
+| 10 | `feat: add Skill, Guard, Flee commands` | skill_menu.tscn, battle_manager.gd expansion |
+| 11 | `feat: add expanded damage calculation (elemental, crit, variance, guard)` | damage_calculator.gd expansion, 3 skill .tres files |
+| 12 | `feat: add status effects and advanced enemy AI` | status_effects.gd, enemy_ai.gd expansion |
+| 13 | `feat: implement inventory manager and rewards wiring` | inventory_manager.gd, 2 inventory scenes, 5 item .tres |
+| 14 | `feat: implement quest manager with objective tracking` | quest_manager.gd, quest_log.tscn, 2 quest .tres |
+| 15 | `feat: implement save/load screen and end-to-end persistence` | save_screen.tscn, serialization validation |
+| 16 | `feat: create full verdant forest exploration map` | verdant_forest.tscn + expanded NPC/content |
+| 17 | `feat: add settings screen (audio)` | settings_screen.tscn |
+| 18 | `feat: add VN history panel and quick menu scenes` | 2 .tscn files |
+| 19 | `fix: edge case handling and bug fixes` | Various |
+| 20 | `chore: update documentation for Phase 2` | Docs |
 
 ---
 
@@ -668,13 +733,15 @@ If distributing across multiple AI agents:
 | Agent 2 | M2 | 1 | 2 | 1 |
 | Agent 3 | M3 | 2 | 1 | 4 |
 | Agent 4 | M4 | 0 | 0 | 0 (wiring only) |
-| Agent 5 | M5 | 2 | 5 | 4 |
-| Agent 6 | M6 | 0 | 0 | 3 |
-| Agent 7 | M7 | 1 | 2 | 5 |
-| Agent 8 | M8 | 1 | 1 | 2 |
-| Agent 9 | M9 | 0 | 1 | 0 |
-| Agent 10 | M10 | 0 | 1 | 10+ |
-| Agent 11 | M11 | 0 | 3 | 0 |
+| Agent 5 | M5.0 + M5.1 | 9 | 1 | 4 |
+| Agent 6 | M5.2 + M5.3 | 1 | 6 | 0 |
+| Agent 7 | M6.0 + M6.1 | 0 | 1 | 2 |
+| Agent 8 | M6.3 + M6.4 | 1 | 0 | 3 |
+| Agent 9 | M7 | 1 | 2 | 5 |
+| Agent 10 | M8 | 1 | 1 | 2 |
+| Agent 11 | M9 | 0 | 1 | 0 |
+| Agent 12 | M10 | 0 | 1 | 10+ |
+| Agent 13 | M11 | 0 | 3 | 0 |
 
 ---
 
