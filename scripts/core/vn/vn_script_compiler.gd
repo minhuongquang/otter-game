@@ -76,10 +76,10 @@ func compile_text(content: String, source_path: String = "") -> VNDialogueResour
 			resource.bgm = load(bgm_path) as AudioStream
 	
 	# Parse character definitions
-	var characters := _parse_character_defs(content)
+	var _characters := _parse_character_defs(content)
 	
 	# Parse variable definitions
-	var variables := _parse_variable_defs(content)
+	var _variables := _parse_variable_defs(content)
 	
 	# Pass 1: Parse all lines into raw commands
 	var raw_commands: Array[Dictionary] = []
@@ -88,7 +88,7 @@ func compile_text(content: String, source_path: String = "") -> VNDialogueResour
 	var lines: PackedStringArray = content.split("\n", false)
 	var in_script: bool = false
 	var choice_buffer: Array[Dictionary] = []  # Buffer for CHOICE lines
-	var current_choice_group: int = -1
+	var _current_choice_group: int = -1
 	
 	for i in range(lines.size()):
 		var line: String = lines[i].strip_edges()
@@ -119,7 +119,7 @@ func compile_text(content: String, source_path: String = "") -> VNDialogueResour
 		# Handle choice buffering
 		if parsed["type"] == "choice_start":
 			choice_buffer.clear()
-			current_choice_group = raw_commands.size()
+			_current_choice_group = raw_commands.size()
 		elif parsed["type"] == "choice_option":
 			choice_buffer.append(parsed)
 			continue  # Don't add to raw_commands yet
@@ -608,7 +608,7 @@ func _parse_line(line: String) -> Variant:
 	
 	return null
 
-func _entry_to_command(entry: Dictionary, label_map: Dictionary) -> VNCommand:
+func _entry_to_command(entry: Dictionary, _label_map: Dictionary) -> VNCommand:
 	match entry.get("type", ""):
 		"dialogue_line":
 			var cmd := VNCmdDialogueLine.new()

@@ -285,10 +285,10 @@ func deserialize(data: Dictionary) -> void:
 
 # === Internal Handlers ===
 
-func _on_state_changed(old_state: int, new_state: int) -> void:
+func _on_state_changed(_old_state: int, _new_state: int) -> void:
 	pass
 
-func _on_command_index_changed(index: int) -> void:
+func _on_command_index_changed(_index: int) -> void:
 	var cmd: VNCommand = state_machine.get_current_command()
 	if cmd == null:
 		return
@@ -356,26 +356,26 @@ func _on_blocking_command_finished() -> void:
 func _on_dialogue_ended() -> void:
 	end_dialogue()
 
-func _on_advance_event(data: Dictionary) -> void:
+func _on_advance_event(_data: Dictionary) -> void:
 	advance()
 
 func _on_make_choice_event(data: Dictionary) -> void:
 	var index: int = data.get("index", -1)
 	make_choice(index)
 
-func _on_toggle_auto_event(data: Dictionary) -> void:
+func _on_toggle_auto_event(_data: Dictionary) -> void:
 	toggle_auto()
 
-func _on_toggle_skip_event(data: Dictionary) -> void:
+func _on_toggle_skip_event(_data: Dictionary) -> void:
 	toggle_skip()
 
-func _on_open_history_event(data: Dictionary) -> void:
+func _on_open_history_event(_data: Dictionary) -> void:
 	open_history()
 
-func _on_game_paused(data: Dictionary) -> void:
+func _on_game_paused(_data: Dictionary) -> void:
 	state_machine.pause()
 
-func _on_game_resumed(data: Dictionary) -> void:
+func _on_game_resumed(_data: Dictionary) -> void:
 	state_machine.resume()
 
 func _process(delta: float) -> void:
