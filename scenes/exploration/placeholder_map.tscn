@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://player001" path="res://scenes/characters/player.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://testinteractable001" path="res://scenes/characters/test_interactable.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://npc001" path="res://scenes/characters/npc.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/world/exploration_exit.gd" id="4"]
 
 [node name="PlaceholderMap" type="Node2D"]
 
@@ -35,5 +36,15 @@ instance = ExtResource("3")
 position = Vector2(1260, 540)
 dialogue_id = "npc_b_conversation"
 
+[node name="ExitToRegionHub" type="Area2D" parent="."]
+script = ExtResource("4")
+position = Vector2(860, 540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToRegionHub"]
+shape = SubResource("RectangleShape2D_2")
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(1920, 1080)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(32, 48)

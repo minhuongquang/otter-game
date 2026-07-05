@@ -21,6 +21,7 @@ var _building_scenes: Dictionary = {}  # building_id -> Button
 # === Built-in ===
 func _ready() -> void:
 	_setup_navigation_manager()
+	_receive_transition_data()
 	_load_current_region()
 	_populate_building_markers()
 	_populate_npc_list()

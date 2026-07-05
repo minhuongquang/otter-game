@@ -265,9 +265,14 @@ Handle scene transitions, loading screens, fade effects, and scene lifecycle. Ce
 ### API Summary
 ```gdscript
 SceneManager.change_scene(scene_path: String, data: Dictionary = {}) -> void
+SceneManager.change_scene_with_data(scene_path: String, data: Dictionary) -> void
 SceneManager.change_scene_with_overlay(scene_path: String, overlay_path: String, data: Dictionary = {}) -> void
+SceneManager.reload_scene() -> void
 SceneManager.reload_current_scene() -> void
+SceneManager.go_back() -> void
+SceneManager.get_current_scene() -> Node
 SceneManager.get_current_scene_path() -> String
+SceneManager.get_pending_data() -> Dictionary
 SceneManager.fade_to_black(duration: float) -> Signal
 SceneManager.fade_from_black(duration: float) -> Signal
 ```
@@ -284,6 +289,45 @@ SceneManager.fade_from_black(duration: float) -> Signal
 ### Dependencies
 - EventBus (emits `scene_changed`, `scene_loading_started`, `scene_loaded`)
 - UIManager (for loading screen and fade overlays)
+
+### Notes
+- `change_scene_with_data()` is a convenience wrapper that makes the data parameter explicit.
+- `reload_scene()` is an alias for `reload_current_scene()`.
+- `go_back()` is a stub — not yet wired. Logs a warning when called.
+- `get_pending_data()` returns the data dictionary passed by the previous scene **exactly once**. After the first call, the internal buffer is cleared. Subsequent calls return an empty dictionary.
+
+### Pending Data Pattern
+
+The pending data pattern allows passing context between scenes:
+
+```gdscript
+# Sending scene — pass region_id to the next scene:
+SceneManager.change_scene("res://scenes/world/region_hub.tscn", {
+    "region_id": "verdant_plains"
+})
+
+# Receiving scene — read data once in _ready():
+func _ready() -> void:
+    var data := SceneManager.get_pending_data()
+    if data.has("region_id"):
+        _load_region(data["region_id"])
+```
+
+```gdscript
+# Sending scene — pass building_id to the next scene:
+SceneManager.change_scene("res://scenes/world/building_interior.tscn", {
+    "building_id": "general_store"
+})
+
+# Receiving scene:
+func _ready() -> void:
+    var data := SceneManager.get_pending_data()
+    if data.has("building_id"):
+        _setup_building(data["building_id"])
+```
+
+Data is consumed exactly once — the destination scene must call `get_pending_data()` during initialization (typically in `_ready()` or `on_scene_enter()`). Calling it later or multiple times returns an empty dictionary.
+
 
 ---
 

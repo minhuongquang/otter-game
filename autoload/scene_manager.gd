@@ -65,9 +65,22 @@ func change_scene_with_overlay(scene_path: String, overlay_path: String, data: D
 			var overlay: Node = overlay_scene.instantiate()
 			_current_scene.add_child(overlay)
 
+func change_scene_with_data(scene_path: String, data: Dictionary) -> void:
+	## Convenience wrapper that makes the data parameter explicit.
+	change_scene(scene_path, data)
+
+func reload_scene() -> void:
+	## Alias for reload_current_scene().
+	reload_current_scene()
+
 func reload_current_scene() -> void:
 	if _current_scene_path:
 		change_scene(_current_scene_path)
+
+func go_back() -> void:
+	## Stub: navigates to the previous scene.
+	## Not yet wired — scene history tracking will be added when needed.
+	push_warning("SceneManager.go_back() is not yet implemented.")
 
 func get_current_scene() -> Node:
 	return _current_scene
@@ -76,7 +89,12 @@ func get_current_scene_path() -> String:
 	return _current_scene_path
 
 func get_pending_data() -> Dictionary:
-	return _pending_data.duplicate()
+	## Returns the data passed from the previous scene and clears it.
+	## Call once during [code]_ready()[/code] or [code]on_scene_enter()[/code].
+	## Subsequent calls return an empty dictionary — data is consumed exactly once.
+	var data := _pending_data.duplicate()
+	_pending_data = {}
+	return data
 
 func fade_to_black(duration: float = 0.3) -> Signal:
 	_ensure_overlay()
@@ -108,9 +126,8 @@ func _cleanup_current_scene() -> void:
 	if _current_scene:
 		if _current_scene.has_method("on_scene_exit"):
 			_current_scene.call("on_scene_exit")
-		_current_scene.queue_free()
-		_current_scene = null
-		_current_scene_path = ""
+	_current_scene = null
+	_current_scene_path = ""
 
 func _update_current_scene() -> void:
 	var root: Window = get_tree().root

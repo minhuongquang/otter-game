@@ -116,7 +116,7 @@ func start_dialogue(dialogue_id: String) -> void:
 	# Set background if specified
 	if resource.background != null:
 		EventBus.emit_event("vn_change_background", {
-			"texture": resource.background,
+			"texture_path": resource.background.resource_path if resource.background.resource_path else "",
 			"transition": "fade",
 			"duration": 0.5
 		})
@@ -124,7 +124,7 @@ func start_dialogue(dialogue_id: String) -> void:
 	# Set BGM if specified
 	if resource.bgm != null:
 		EventBus.emit_event("vn_play_bgm", {
-			"audio": resource.bgm,
+			"audio_path": resource.bgm.resource_path if resource.bgm.resource_path else "",
 			"fade_in": 0.5
 		})
 	
@@ -293,8 +293,15 @@ func _on_command_index_changed(index: int) -> void:
 	if cmd == null:
 		return
 	
+	# Dialogue lines are displayed via the UI panel (typewriter)
+	if cmd.command_type == "dialogue_line":
+		if vn_panel != null and vn_panel.has_method("update_dialogue"):
+			var line_data := get_current_line_data()
+			vn_panel.update_dialogue(line_data)
+		return
+	
 	# Execute non-blocking commands immediately
-	if not cmd.blocking and cmd.command_type != "dialogue_line":
+	if not cmd.blocking:
 		executor.execute(cmd)
 		# For non-blocking commands, advance state machine
 		if not executor.has_active_blocking():

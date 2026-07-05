@@ -17,48 +17,59 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.05, 0.05, 0.1, 1.0)
 
-[node name="Title" type="Label" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
-anchors_preset = 0
-offset_left = 560.0
-offset_top = 100.0
-offset_right = 1360.0
-offset_bottom = 200.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 text = "SariaMod"
 horizontal_alignment = 1
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 64
 
-[node name="ButtonContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 0
-offset_left = 760.0
-offset_top = 350.0
-offset_right = 1160.0
-offset_bottom = 550.0
-theme_override_constants/separation = 12.0
-
-[node name="NewGameButton" type="Button" parent="ButtonContainer"]
+[node name="ButtonContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="NewGameButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
 text = "New Game"
 theme_override_font_sizes/font_size = 24
 
-[node name="LoadGameButton" type="Button" parent="ButtonContainer"]
+[node name="LoadGameButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
 text = "Load Game"
 theme_override_font_sizes/font_size = 24
 
-[node name="SettingsButton" type="Button" parent="ButtonContainer"]
+[node name="SettingsButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
 text = "Settings"
 theme_override_font_sizes/font_size = 24
 
-[node name="QuitButton" type="Button" parent="ButtonContainer"]
+[node name="TestRoomButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+text = "Test Room"
+theme_override_font_sizes/font_size = 24
+
+[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
 text = "Quit"
 theme_override_font_sizes/font_size = 24
 
-[connection signal="pressed" from="ButtonContainer/NewGameButton" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="ButtonContainer/LoadGameButton" to="." method="_on_load_game_pressed"]
-[connection signal="pressed" from="ButtonContainer/SettingsButton" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="ButtonContainer/QuitButton" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ButtonContainer/NewGameButton" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ButtonContainer/LoadGameButton" to="." method="_on_load_game_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ButtonContainer/SettingsButton" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ButtonContainer/TestRoomButton" to="." method="_on_test_room_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ButtonContainer/QuitButton" to="." method="_on_quit_pressed"]

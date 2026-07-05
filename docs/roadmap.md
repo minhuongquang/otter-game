@@ -42,6 +42,10 @@ timeline
 | Visual Novel Framework | ✅ DONE | 37 files — commands, compiler, manager, UI, docs |
 | World Navigation System | ✅ DONE | 21 files — NavigationManager, WorldMap, RegionHub, BuildingInterior |
 | Sample world data | ✅ DONE | 2 regions, 4 buildings, 1 shop, 2 region connections |
+| Main Menu Functionality | ✅ DONE | All 4 buttons functional; New Game (reset + VN transition), Load (placeholder), Quit (editor-safe) |
+| Settings Menu | ✅ DONE | BGM/SFX volume sliders (0-100%), display mode (Windowed/Fullscreen), back navigation with Escape key support |
+| Test Room | ✅ DONE | Sandbox scene accessible from Main Menu, reuses Player scene with full movement + camera, Escape returns to menu |
+| Keyboard Navigation | ✅ DONE | Main Menu auto-focuses first button, Up/Down arrows navigate, Enter/Space activate. Settings: Up/Down moves between controls, Left/Right adjusts sliders/options, Esc = Back |
 
 **Deliverable**: Bootable project with main menu and core infrastructure.
 
@@ -147,14 +151,18 @@ Sample data is built alongside each system, not postponed to the end.
 | **Complexity** | Medium |
 | **Playable result** | Watch VN → World Map → click region → enter hub → enter building → walk → exit back |
 
-**Tasks**:
-- [ ] Wire VN end → SceneManager → WorldMap
-- [ ] Wire WorldMap region selection → RegionHub (with region data)
-- [ ] Wire RegionHub building selection → BuildingInterior
-- [ ] Wire BuildingInterior → placeholder exploration map
-- [ ] Wire Exploration exit → RegionHub
-- [ ] Implement SceneManager pending data pattern (spec exists)
-- [ ] Test full navigation loop
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 4.1 | Implement SceneManager foundation | ✅ DONE | Centralize all scene transitions |
+| 4.2 | Implement SceneManager pending data pattern | ✅ DONE | Generic payload passing between scenes |
+| 4.3 | Wire VN end → WorldMap | ✅ DONE | Use SceneManager |
+| 4.4 | Wire WorldMap region selection → RegionHub | ✅ DONE | Pass `region_id` via pending data |
+| 4.5 | Wire RegionHub building selection → BuildingInterior | ✅ DONE | Pass `building_id` via pending data |
+| 4.6 | Wire BuildingInterior → Exploration map | ✅ DONE | Placeholder exploration scene |
+| 4.7 | Wire Exploration exit → RegionHub | ✅ DONE | Restore previous region context |
+| 4.8 | Test complete navigation loop | ✅ DONE | VN → World → Region → Building → Exploration → Region |
+
+**Milestone M4 — "World Flow" COMPLETE** 🎉
 
 ### Milestone 5: "Fight" — Battle Foundation
 

@@ -26,39 +26,23 @@ See [phase2_roadmap.md](phase2_roadmap.md) for full details.
 
 ---
 
-## Active Milestone: M3.5 — "Sample NPC Content"
+## Milestone M4 Complete ✅
 
-**Goal**: Create sample content for testing the interaction and dialogue pipeline.
+All navigation wiring validated:
+- 11 `SceneManager.change_scene()` calls — 0 direct `get_tree().change_scene_to_file()` calls
+- Pending data consumed exactly once per transition
+- No stale transition data remains
+- Player input restored after every transition
 
-**Playable result**: Walk → press E near NPC A → greeting dialogue → walk to NPC B → multi-line dialogue
+## Remaining Technical Debt
 
-| # | Task | Status | Files to Create/Modify |
-|---|------|--------|-----------------|
-| 3.5.1 | Create Dialogue A (simple greeting) | ✅ DONE | `database/dialogue/npc_a_greeting.dialogue` |
-| 3.5.2 | Create Dialogue B (multi-line conversation) | ✅ DONE | `database/dialogue/npc_b_conversation.dialogue` |
-| 3.5.3 | Add compile-on-demand fallback to NPC.gd | ✅ DONE | `scripts/components/npc.gd` |
-| 3.5.4 | Place both NPCs in placeholder map with unique dialogue_ids | ✅ DONE | `scenes/exploration/placeholder_map.tscn` |
+- `world_map.gd` back button transitions to MainMenu — acceptable for now (not main flow path)
+- `go_back()` stub in SceneManager — not wired; no scene history tracking exists
+- `TestInteractable.print("Interaction successful.")` — intentional demo behavior from M3.1
 
 ---
 
-## Milestone M3 Complete ✅
-
-All sub-milestones for M3 ("Talk") are done. The player can now walk up to an NPC and interact with dialogue.
-
-## Upcoming Milestones
-
-### M4: "World Flow" — Navigation Integration
-
-| # | Task | Status | Notes |
-|---|------|--------|-------|
-| 4.1 | Wire VN end → WorldMap | ⬜ TODO | Wiring only |
-| 4.2 | Wire region selection → RegionHub | ⬜ TODO | Wiring only |
-| 4.3 | Wire building selection → BuildingInterior | ⬜ TODO | Wiring only |
-| 4.4 | Wire BuildingInterior → exploration map | ⬜ TODO | Wiring only |
-| 4.5 | Wire Exploration exit → RegionHub | ⬜ TODO | Wiring only |
-| 4.6 | Implement SceneManager pending data pattern | ⬜ TODO | — |
-
-### M5: "Fight" — Battle Foundation
+## Active Milestone: M5 — "Fight" (Battle Foundation)
 
 | # | Task | Status | Files to Create |
 |---|------|--------|-----------------|
@@ -139,6 +123,7 @@ All sub-milestones for M3 ("Talk") are done. The player can now walk up to an NP
 | Phase 2 Roadmap | 2026-07-03 | 11-milestone plan in [phase2_roadmap.md](phase2_roadmap.md) |
 | M1 — "Boot to VN" | 2026-07-03 | 4 VN scenes, boot → main menu → VN flow |
 | M2 — "Walk" (Player Movement) | 2026-07-03 | player.tscn, player_controller.gd, placeholder_map.tscn, hero.tres, InputManager wiring |
+| D1 — Main Menu Functionality | 2026-07-04 | New Game (reset flags + VN transition), Load (placeholder), Settings (BGM/SFX sliders + display mode), Quit (editor-safe), Test Room (sandbox with player movement) |
 
 ---
 

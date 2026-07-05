@@ -11,41 +11,36 @@ signal quit_requested
 
 # === Constants ===
 const FIRST_VN_PATH: String = "res://scenes/ui/vn/visual_novel.tscn"
+const TEST_ROOM_PATH: String = "res://scenes/test/test_room.tscn"
+
+# === @onready ===
+@onready var first_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/NewGameButton
 
 # === Built-in ===
 func _ready() -> void:
-	EventBus.listen("game_loaded", _on_game_loaded)
 	UIManager.show_notification("Welcome to SariaMod")
+	first_button.grab_focus()
 
 func on_scene_enter() -> void:
 	UIManager.show_hud()
 
 # === Button Callbacks ===
 func _on_new_game_pressed() -> void:
-	if SaveManager.slot_exists(0):
-		# Confirm overwrite if autosave exists
-		UIManager.open_screen("confirmation", {
-			"title": "New Game",
-			"message": "Starting a new game will overwrite your autosave. Continue?",
-			"confirm_callback": _start_new_game
-		})
-	else:
-		_start_new_game()
+	GlobalFlags.clear_all_flags()
+	EventBus.emit_event("game_started", {})
+	SceneManager.change_scene(FIRST_VN_PATH)
 
 func _on_load_game_pressed() -> void:
-	UIManager.open_screen("save_screen", {"mode": "load"})
+	UIManager.show_notification("Load Game is not available yet.")
 
 func _on_settings_pressed() -> void:
 	UIManager.open_screen("settings")
 
+func _on_test_room_pressed() -> void:
+	SceneManager.change_scene(TEST_ROOM_PATH)
+
 func _on_quit_pressed() -> void:
-	get_tree().quit()
-
-# === Private Methods ===
-func _start_new_game() -> void:
-	EventBus.emit_event("game_started", {})
-	SceneManager.change_scene(FIRST_VN_PATH)
-
-func _on_game_loaded(data: Dictionary) -> void:
-	# SceneManager handles transition via SaveManager
-	pass
+	if OS.has_feature("editor"):
+		print("MainMenu: Quit requested — running in editor, cannot quit.")
+	else:
+		get_tree().quit()

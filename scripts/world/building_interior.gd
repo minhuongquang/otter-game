@@ -1,7 +1,9 @@
 extends Node2D
 
 ## Controller for a building interior scene.
-## Generic template that handles NPC spawning, exits, and building-specific logic.
+## Generic template that handles NPC spawning, exits, and transitions
+## to the exploration map. Reads [code]region_id[/code] and
+## [code]building_id[/code] from SceneManager pending data.
 
 # === Exports ===
 @export var navigation_manager: NavigationManager = null
@@ -22,6 +24,7 @@ var _region_id: String = ""
 # === Built-in ===
 func _ready() -> void:
 	_setup_navigation_manager()
+	_receive_transition_data()
 	_load_building_data()
 	_spawn_npcs()
 	_connect_signals()
@@ -31,8 +34,28 @@ func _setup_navigation_manager() -> void:
 		navigation_manager = NavigationManager.new()
 		add_child(navigation_manager)
 
+func _receive_transition_data() -> void:
+	## Reads region_id and building_id from SceneManager pending data.
+	## Falls back to NavigationManager state if no pending data exists.
+	var data: Dictionary = SceneManager.get_pending_data()
+	
+	if data.has("region_id") and not data["region_id"].is_empty():
+		_region_id = data["region_id"]
+		if navigation_manager:
+			navigation_manager.current_region_id = _region_id
+	
+	if data.has("building_id") and not data["building_id"].is_empty():
+		building_id = data["building_id"]
+		if navigation_manager:
+			navigation_manager.current_building_id = building_id
+	
+	# Fallback: if no pending data, read from NavigationManager
+	if _region_id.is_empty() and navigation_manager:
+		_region_id = navigation_manager.current_region_id
+	if building_id.is_empty() and navigation_manager:
+		building_id = navigation_manager.current_building_id
+
 func _load_building_data() -> void:
-	_region_id = navigation_manager.current_region_id
 	_building = navigation_manager.get_current_building()
 	
 	if _building == null:
@@ -95,7 +118,7 @@ func _connect_signals() -> void:
 func _on_exit_door_entered(body: Node) -> void:
 	if body.is_in_group("player"):
 		navigation_manager.exit_building()
-		_transition_to_region_hub()
+		_transition_to_exploration()
 
 func _on_interaction_area_entered(npc: Area2D) -> void:
 	# Show interaction prompt
@@ -105,8 +128,10 @@ func _on_interaction_area_entered(npc: Area2D) -> void:
 
 # === Private Methods ===
 
-func _transition_to_region_hub() -> void:
-	SceneManager.change_scene("res://scenes/world/region_hub.tscn", {
+func _transition_to_exploration() -> void:
+	## Transitions to the placeholder exploration map, passing region_id
+	## so the exit can return to the correct RegionHub.
+	SceneManager.change_scene("res://scenes/exploration/placeholder_map.tscn", {
 		"region_id": _region_id
 	})
 

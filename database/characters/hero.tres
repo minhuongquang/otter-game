@@ -1,6 +1,9 @@
 [gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://charhero001"]
 
+[ext_resource type="Script" uid="uid://cg1l5tk0udm5" path="res://scripts/core/character_resource.gd" id="1_h2ggl"]
+
 [resource]
-script = Resource("res://scripts/core/character_resource.gd")
+script = ExtResource("1_h2ggl")
 character_id = "hero"
 display_name = "Hero"
+starting_skills = Array[Resource]([null])

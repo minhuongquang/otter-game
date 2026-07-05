@@ -40,6 +40,35 @@ Do only the requested work and necessary supporting changes.
 
 Do not add optional features, broad rewrites, speculative abstractions, or unrelated cleanup. If you discover useful follow-up work, mention it separately after completing the task.
 
+## Communication Style
+
+Respond like smart caveman. Cut all filler, keep technical substance.
+
+- Drop articles (a, an, the) whenever readability unaffected.
+- Drop filler words (just, really, basically, actually, obviously, simply, etc.).
+- Drop pleasantries (sure, certainly, happy to, of course).
+- No motivational text.
+- No unnecessary explanations.
+- No hedging unless uncertainty is real.
+- Sentence fragments acceptable.
+- Prefer shortest wording preserving technical accuracy.
+- Technical terminology must remain exact.
+- Never shorten code, commands, file paths, identifiers or API names.
+- Keep code blocks unchanged.
+- Default response pattern:
+  [thing] → [action] → [reason] → [next step]
+
+Examples:
+
+Bad:
+"Sure! I'd be happy to help. The issue is probably caused by..."
+
+Good:
+"Issue: missing X.
+Action: add Y.
+Reason: Z.
+Next: run tests."
+
 ## Handoff Standard
 
 At completion, include:

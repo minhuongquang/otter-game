@@ -11,6 +11,7 @@ class_name VNPanel
 
 # === Constants ===
 const MAIN_MENU_PATH: String = "res://scenes/ui/main_menu.tscn"
+const WORLD_MAP_PATH: String = "res://scenes/world/world_map.tscn"
 const PROLOGUE_DIALOGUE_ID: String = "prologue_001"
 const PROLOGUE_DIALOGUE_FILE: String = "res://database/dialogue/sample_prologue.dialogue"
 
@@ -87,6 +88,11 @@ func _setup_vn_manager() -> void:
 	# Use the autoload VNManager
 	vn_manager = VNManager
 	
+	# Guard against transient engine timing issues during scene transitions
+	if not is_instance_valid(vn_manager):
+		push_error("VNPanel: VNManager autoload is not valid. Cannot initialize VN.")
+		return
+	
 	# Set the VN panel reference so VNManager can update this UI
 	vn_manager.vn_panel = self
 	
@@ -100,42 +106,128 @@ func _setup_vn_manager() -> void:
 		_compile_and_start()
 
 func _compile_and_start() -> void:
-	# Try to load compiled resource first
+	# Try to load pre-compiled resource first
 	var resource: VNDialogueResource = Database.get_dialogue(dialogue_id)
 	
 	if resource == null:
-		# Fallback: compile the .dialogue file at runtime
-		resource = _compile_dialogue_file()
+		# Fallback: compile from embedded dialogue text
+		resource = _compile_prologue()
 	
 	if resource == null:
 		push_error("VNPanel: Could not load or compile dialogue: %s" % dialogue_id)
 		return
 	
+	# Register the resource with Database so VNManager can find it
+	Database._cache["dialogue/" + dialogue_id] = resource
+	
 	# Start the dialogue
 	vn_manager.start_dialogue(dialogue_id)
 
-func _compile_dialogue_file() -> VNDialogueResource:
+func _compile_prologue() -> VNDialogueResource:
 	var compiler := VNScriptCompiler.new()
-	var resource: VNDialogueResource = compiler.compile_file(PROLOGUE_DIALOGUE_FILE)
+	var source_text: String = _get_prologue_source()
+	var resource: VNDialogueResource = compiler.compile_text(source_text, "sample_prologue.dialogue")
 	
 	if resource == null:
-		push_error("VNPanel: Failed to compile dialogue file: %s" % PROLOGUE_DIALOGUE_FILE)
+		push_error("VNPanel: Failed to compile prologue dialogue from source")
 		return null
 	
-	# Override the dialogue_id to match what we expect
+	# Ensure dialogue_id matches
 	resource.dialogue_id = dialogue_id
-	
-	# Save compiled resource for future use
-	var save_path: String = "res://database/dialogue/%s.tres" % dialogue_id
-	var dir := DirAccess.open("res://database/dialogue/")
-	if dir == null:
-		DirAccess.make_dir_recursive_absolute("res://database/dialogue/")
-	
-	var error := ResourceSaver.save(resource, save_path)
-	if error != OK:
-		push_warning("VNPanel: Could not save compiled dialogue: %s (error %d)" % [save_path, error])
-	
 	return resource
+
+func _get_prologue_source() -> String:
+	return """[META]
+id: "prologue_001"
+bg: "res://assets/art/backgrounds/castle_hall.png"
+bgm: "res://assets/audio/bgm/melancholy.ogg"
+on_start: []
+on_end: [{"type": "set_flag", "key": "prologue_seen", "value": true}]
+
+[CHARACTERS]
+saria = "res://database/characters/saria.tres"
+lyra = "res://database/characters/lyra.tres"
+
+[VARIABLES]
+trust_level: 0
+met_saria: false
+
+[SCRIPT]
+LABEL start
+
+# Introduction scene
+LINE saria "Saria" smile "Welcome, traveler. I've been expecting you."
+
+# Branch based on story flag
+BRANCH prologue_seen == true JUMP greeting_again
+
+LABEL first_time
+
+LINE saria "Saria" neutral "This is your first time here, isn't it?"
+
+CHOICE "Yes, I'm new to this place."
+    SET_FLAG met_saria true
+    JUMP after_intro
+
+CHOICE "I've been here before..."
+    SET_VAR trust_level +5
+    JUMP after_intro
+
+LABEL greeting_again
+
+LINE saria "Saria" happy "Welcome back! I'm glad to see you again."
+
+LABEL after_intro
+
+LINE saria "Saria" neutral "Let me introduce you to everyone."
+
+SHOW lyra right fade_in
+
+LINE lyra "Lyra" happy "Hey there! I'm Lyra!"
+
+SHAKE 0.3 0.5
+
+LINE lyra "Lyra" neutral "Oops, sorry. Got a bit excited there."
+
+CHOICE "Nice to meet you, Lyra!"
+    SET_VAR trust_level +2
+    JUMP tour_start
+
+CHOICE "You seem energetic..."
+    SET_VAR trust_level +1
+    JUMP tour_start
+
+LABEL tour_start
+
+LINE saria "Saria" smile "Let me show you around the castle."
+
+BACKGROUND "res://assets/art/backgrounds/castle_hallway.png" FADE 1.0
+
+BGM "res://assets/audio/bgm/exploration.ogg" 0.5
+
+LINE saria "Saria" neutral "This is the main hallway. The library is to the left."
+
+WAIT 1.0
+
+EXPR lyra excited
+
+LINE lyra "Lyra" excited "And the kitchen is to the right! I'll show you later!"
+
+HIDE lyra fade_out
+
+LINE saria "Saria" smile "She's always like that. You'll get used to it."
+
+GIVE_ITEM old_map 1
+
+LINE saria "Saria" neutral "Here, take this map. It might help you find your way."
+
+UNLOCK_REGION castle_interior
+
+# Battle tutorial trigger
+START_BATTLE training_dummy
+
+LINE saria "Saria" smile "Not bad for a first try!"
+"""
 
 func _on_vn_ended(_dialogue_id: String) -> void:
 	# Disconnect from VNManager to avoid double-calls
@@ -147,8 +239,8 @@ func _on_vn_ended(_dialogue_id: String) -> void:
 		InputManager.pop_context()
 		queue_free()
 	else:
-		# Boot/Main Menu flow: return to main menu
-		SceneManager.change_scene(MAIN_MENU_PATH)
+		# Boot/Main Menu flow: transition to WorldMap
+		SceneManager.change_scene(WORLD_MAP_PATH)
 
 # === UI Methods ===
 

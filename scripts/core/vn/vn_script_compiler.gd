@@ -61,6 +61,20 @@ func compile_text(content: String, source_path: String = "") -> VNDialogueResour
 	if meta.has("id"):
 		resource.dialogue_id = meta["id"]
 	
+	# Populate resource metadata from parsed [META] section
+	if meta.has("on_start"):
+		resource.on_start_events = _parse_json_array(meta["on_start"])
+	if meta.has("on_end"):
+		resource.on_end_events = _parse_json_array(meta["on_end"])
+	if meta.has("bg"):
+		var bg_path: String = meta["bg"]
+		if ResourceLoader.exists(bg_path):
+			resource.background = load(bg_path) as Texture2D
+	if meta.has("bgm"):
+		var bgm_path: String = meta["bgm"]
+		if ResourceLoader.exists(bgm_path):
+			resource.bgm = load(bgm_path) as AudioStream
+	
 	# Parse character definitions
 	var characters := _parse_character_defs(content)
 	
@@ -93,7 +107,7 @@ func compile_text(content: String, source_path: String = "") -> VNDialogueResour
 			continue
 		
 		# Try to parse the line
-		var parsed := _parse_line(line)
+		var parsed: Variant = _parse_line(line)
 		if parsed == null:
 			push_warning("VNScriptCompiler: Unrecognized line at %s:%d: %s" % [source_path, i + 1, line])
 			continue
@@ -245,7 +259,92 @@ func _parse_value(value_str: String) -> Variant:
 		return value_str.substr(1, value_str.length() - 2)
 	return value_str
 
-func _parse_line(line: String) -> Dictionary:
+## Parse a JSON-style array string from metadata into an Array[Dictionary].
+## Handles formats like: [] or [{"type":"set_flag","key":"p","value":true}]
+func _parse_json_array(raw: String) -> Array[Dictionary]:
+	raw = raw.strip_edges()
+	if raw == "[]" or raw == "":
+		return []
+	
+	var result: Array[Dictionary] = []
+	# Remove outer brackets
+	var inner: String = raw.substr(1, raw.length() - 2).strip_edges()
+	if inner.is_empty():
+		return result
+	
+	# Parse each {...} object
+	var depth: int = 0
+	var start: int = -1
+	for i in range(inner.length()):
+		var ch: String = inner[i]
+		if ch == "{":
+			if depth == 0:
+				start = i
+			depth += 1
+		elif ch == "}":
+			depth -= 1
+			if depth == 0 and start >= 0:
+				var obj_str: String = inner.substr(start, i - start + 1)
+				var obj := _parse_json_object(obj_str)
+				if not obj.is_empty():
+					result.append(obj)
+				start = -1
+	
+	return result
+
+## Parse a single JSON object string into a Dictionary.
+## Handles: {"type":"set_flag","key":"p","value":true}
+func _parse_json_object(raw: String) -> Dictionary:
+	var obj: Dictionary = {}
+	# Remove outer braces
+	var inner: String = raw.substr(1, raw.length() - 2).strip_edges()
+	if inner.is_empty():
+		return obj
+	
+	# Split by commas, respecting quoted strings
+	var pairs := _split_json_pairs(inner)
+	for pair in pairs:
+		var colon_idx: int = pair.find(":")
+		if colon_idx == -1:
+			continue
+		var key: String = pair.substr(0, colon_idx).strip_edges()
+		var value_str: String = pair.substr(colon_idx + 1).strip_edges()
+		# Remove quotes from key
+		if key.begins_with("\"") and key.ends_with("\""):
+			key = key.substr(1, key.length() - 2)
+		obj[key] = _parse_value(value_str)
+	
+	return obj
+
+## Split a JSON object contents string by commas, respecting quoted strings and nested braces.
+func _split_json_pairs(raw: String) -> PackedStringArray:
+	var result: PackedStringArray = []
+	var current: String = ""
+	var in_quotes: bool = false
+	var depth: int = 0
+	
+	for i in range(raw.length()):
+		var ch: String = raw[i]
+		if ch == "\"" and (i == 0 or raw[i - 1] != "\\"):
+			in_quotes = not in_quotes
+		elif not in_quotes:
+			if ch == "{" or ch == "[":
+				depth += 1
+			elif ch == "}" or ch == "]":
+				depth -= 1
+		
+		if ch == "," and not in_quotes and depth == 0:
+			result.append(current.strip_edges())
+			current = ""
+		else:
+			current += ch
+	
+	if not current.strip_edges().is_empty():
+		result.append(current.strip_edges())
+	
+	return result
+
+func _parse_line(line: String) -> Variant:
 	# Try each pattern
 	if line.begins_with("LINE "):
 		var regex := RegEx.create_from_string(COMMAND_PATTERNS["LINE"])
@@ -507,7 +606,7 @@ func _parse_line(line: String) -> Dictionary:
 				"label_name": result.get_string(1)
 			}
 	
-	return {}
+	return null
 
 func _entry_to_command(entry: Dictionary, label_map: Dictionary) -> VNCommand:
 	match entry.get("type", ""):
