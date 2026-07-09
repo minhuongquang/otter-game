@@ -115,7 +115,7 @@ func _on_region_marker_pressed(region_id: String) -> void:
 	
 	info_panel.visible = true
 
-func _on_region_marker_hovered(region_id: String) -> void:
+func _on_region_marker_hovered(_region_id: String) -> void:
 	pass
 
 func _on_region_marker_unhovered() -> void:
@@ -134,7 +134,7 @@ func _on_back_pressed() -> void:
 	EventBus.emit_event("return_to_previous_scene", {})
 	SceneManager.change_scene("res://scenes/ui/main_menu.tscn")
 
-func _on_navigation_blocked(target_id: String, reason: String) -> void:
+func _on_navigation_blocked(_target_id: String, reason: String) -> void:
 	EventBus.emit_event("show_notification", {
 		"message": reason,
 		"duration": 3.0

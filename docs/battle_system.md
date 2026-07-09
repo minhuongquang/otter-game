@@ -1,6 +1,6 @@
 # Battle System
 
-> **Status**: Foundation implemented (M5.0.1–M5.0.5). Manager, scene, AI, UI pending (M5.1+).
+> **Status**: M5.0 (Foundation) + M5.1 (Headless Simulation) complete. UI pending (M5.2).
 
 ## Overview
 
@@ -17,6 +17,11 @@ Turn-based combat, party vs. enemies. One actor per side in M5.0 (multi-actor in
 | `scripts/core/battle_command.gd` | `BattleCommand` | Pending action |
 | `scripts/core/battle_result.gd` | `BattleResult` + `TargetResult` | Action outcomes |
 | `scripts/utilities/damage_calculator.gd` | `DamageCalculator` + `DamageCalcResult` | Stateless formulas |
+| `scripts/battle/turn_manager.gd` | `TurnManager` | Round-robin turn order |
+| `scripts/battle/battle_factory.gd` | `BattleFactory` | Resource → BattleActor conversion |
+| `scripts/battle/enemy_ai.gd` | `EnemyAI` | Phase 1: basic attack random |
+| `scripts/battle/battle_manager.gd` | `BattleManager` | Full battle orchestrator |
+| `scenes/battle/battle.tscn` | (scene) | Root Node, owns BattleManager |
 
 ## States
 

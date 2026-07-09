@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://b58jysf3kymlu"]
+
+[ext_resource type="Texture2D" uid="uid://cqf5nr3tbj51t" path="res://assets/assetStore/Characters/Characters/chara_7.png" id="1_7hvuv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aefum"]
+atlas = ExtResource("1_7hvuv")
+region = Rect2(0, 0, 16, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_txj1a"]
+atlas = ExtResource("1_7hvuv")
+region = Rect2(16, 0, 16, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vqxa3"]
+atlas = ExtResource("1_7hvuv")
+region = Rect2(32, 0, 16, 20)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hxbny"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aefum")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_txj1a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vqxa3")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="TileMap" type="TileMap" unique_id=669944495]
+format = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=321400392]
+sprite_frames = SubResource("SpriteFrames_hxbny")
+frame = 1
+frame_progress = 0.9370673

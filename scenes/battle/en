@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://enemypanel001"]
+
+[ext_resource type="Script" path="res://scripts/battle/enemy_panel.gd" id="1_enemy"]
+
+[node name="EnemyPanel" type="HBoxContainer"]
+script = ExtResource("1_enemy")

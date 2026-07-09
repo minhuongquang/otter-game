@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/enemy_resource.gd" id="1_enemy"]
+[ext_resource type="Resource" path="res://database/enemies/slime_stats.tres" id="2_stats"]
+[ext_resource type="Resource" path="res://database/skills/basic_attack.tres" id="3_skill"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "slime"
+display_name = "Slime"
+stats = ExtResource("2_stats")
+skills = Array[Resource]([ExtResource("3_skill")])
+exp_reward = 5
+element = "neutral"
+ai_type = "basic"

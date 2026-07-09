@@ -57,7 +57,17 @@ func slot_exists(slot: int) -> bool:
 func auto_save() -> bool:
 	return save_game(AUTOSAVE_SLOT)
 
+# === Lifecycle ===
+
+func _ready() -> void:
+	EventBus.listen("battle_finished", _on_battle_finished_autosave)
+
 # === Private Methods ===
+
+func _on_battle_finished_autosave(data: Dictionary) -> void:
+	if data.get("outcome", -1) == BattleEnums.BattleOutcome.VICTORY:
+		auto_save()
+
 
 func _get_save_path(slot: int) -> String:
 	return SAVE_DIR + "save_" + str(slot) + ".dat"
@@ -70,7 +80,7 @@ func _collect_save_data() -> Dictionary:
 		"story_flags": {},
 		"current_scene": SceneManager.get_current_scene_path() if has_node("/root/SceneManager") else "",
 		"player_position": Vector2.ZERO,
-		"party_members": [],
+		"party_members": PartyState.snapshots.duplicate(),
 		"inventory": [],
 		"currency": 0,
 		"quests": [],
@@ -119,5 +129,9 @@ func _apply_save_data(data: Dictionary) -> void:
 	if data.has("story_flags"):
 		for key: String in data["story_flags"]:
 			GlobalFlags.set_flag(key, data["story_flags"][key])
+	
+	# Party runtime state
+	if data.has("party_members"):
+		PartyState.snapshots = data["party_members"]
 	
 	# Scene restoration handled externally by SceneManager

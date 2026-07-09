@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="StatsResource" load_steps=2 format=3 uid="uid://statslime001"]
+
+[ext_resource type="Script" path="res://scripts/core/stats_resource.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+max_hp = 20
+max_sp = 5
+attack = 6
+defense = 4
+magic_attack = 3
+magic_defense = 3
+agility = 3
+luck = 2

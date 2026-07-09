@@ -25,6 +25,7 @@ InputManager="*res://autoload/input_manager.gd"
 UIManager="*res://autoload/ui_manager.gd"
 SceneManager="*res://autoload/scene_manager.gd"
 GlobalFlags="*res://autoload/global_flags.gd"
+PartyState="*res://autoload/party_state.gd"
 VNManager="*res://scripts/managers/vn/vn_manager.gd"
 
 [display]
@@ -117,6 +118,11 @@ battle_item={
 battle_flee={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":53,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+battle_debug={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":66,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
 

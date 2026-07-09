@@ -1,9 +1,23 @@
-[gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://charhero001"]
+[gd_resource type="Resource" script_class="CharacterResource" load_steps=4 format=3 uid="uid://charhero001"]
 
-[ext_resource type="Script" uid="uid://cg1l5tk0udm5" path="res://scripts/core/character_resource.gd" id="1_h2ggl"]
+[ext_resource type="Script" uid="uid://cg1l5tk0udm5" path="res://scripts/core/character_resource.gd" id="1_char"]
+[ext_resource type="Script" path="res://scripts/core/stats_resource.gd" id="2_stats_script"]
+[ext_resource type="Resource" path="res://database/skills/basic_attack.tres" id="3_skill"]
 
 [resource]
-script = ExtResource("1_h2ggl")
+script = ExtResource("1_char")
 character_id = "hero"
 display_name = "Hero"
-starting_skills = Array[Resource]([null])
+base_stats = SubResource("hero_stats")
+starting_skills = Array[Resource]([ExtResource("3_skill")])
+
+[sub_resource type="Resource" id="hero_stats"]
+script = ExtResource("2_stats_script")
+max_hp = 30
+max_sp = 15
+attack = 12
+defense = 8
+magic_attack = 5
+magic_defense = 6
+agility = 10
+luck = 5

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://testinteractable001" path="res://scenes/characters/test_interactable.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://npc001" path="res://scenes/characters/npc.tscn" id="3"]
 [ext_resource type="Script" path="res://scripts/world/exploration_exit.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/debug/battle_debug_trigger.gd" id="5"]
 
 [node name="PlaceholderMap" type="Node2D"]
 
@@ -42,6 +43,9 @@ position = Vector2(860, 540)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToRegionHub"]
 shape = SubResource("RectangleShape2D_2")
+
+[node name="BattleDebugTrigger" type="Node" parent="."]
+script = ExtResource("5")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(1920, 1080)

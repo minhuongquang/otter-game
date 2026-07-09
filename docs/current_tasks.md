@@ -2,7 +2,7 @@
 
 > **Purpose**: Track active development tasks, priorities, and assignees.  
 > **Type**: Living document — update as tasks change.  
-> **Last Updated**: 2026-07-05 (M5.0.1–M5.0.4 complete)
+> **Last Updated**: 2026-07-06 (M5.1 complete)
 
 ---
 
@@ -57,32 +57,35 @@ All navigation wiring validated:
 | 5.0.4a | Create shared `BattleEnums` | ✅ DONE | `scripts/battle/battle_enums.gd` |
 | 5.0.4b | Create `StatusEffect` | ✅ DONE | `scripts/battle/status_effect.gd` |
 | 5.0.5 | Create `BattleStateMachine` | ✅ DONE | `scripts/battle/battle_state_machine.gd` |
-| 5.0.6 | Create `TurnManager` | ⬜ TODO | `scripts/battle/turn_manager.gd` |
-| 5.0.7 | Create sample .tres files | ⬜ TODO | `database/enemies/slime_stats.tres`, `database/skills/basic_attack.tres`, `database/enemies/slime.tres`, `database/characters/hero.tres` |
+| 5.0.6 | Create `TurnManager` | ✅ DONE | `scripts/battle/turn_manager.gd` |
+| 5.0.7 | Create sample .tres files | ✅ DONE | `database/enemies/slime_stats.tres`, `database/skills/basic_attack.tres`, `database/enemies/slime.tres`, `database/characters/hero.tres` |
+| 5.0.7a | Create `BattleFactory` | ✅ DONE | `scripts/battle/battle_factory.gd` |
 | 5.0.8 | Write DamageCalculator unit test | ⬜ TODO | `tests/test_battle/test_damage_calculator.gd` |
 
-### M5.1 — Battle Simulation (headless)
+### M5.1 — Battle Simulation (headless) ✅ COMPLETE
 
 | # | Task | Status | Files to Create |
 |---|------|--------|-----------------|
-| 5.1.1 | Create Battle scene root | ⬜ TODO | `scenes/battle/battle.tscn` |
-| 5.1.2 | Implement BattleManager orchestrator | ⬜ TODO | `scripts/battle/battle_manager.gd` |
-| 5.1.3 | Implement basic enemy AI | ⬜ TODO | `scripts/battle/enemy_ai.gd` |
-| 5.1.4 | Create manual encounter trigger (B key) | ⬜ TODO | — |
-| 5.1.5 | Implement victory/defeat + BattleResult emission | ⬜ TODO | — |
-| 5.1.6 | Wire EventBus emissions | ⬜ TODO | — |
-| 5.1.7 | Headless validation via console | ⬜ TODO | — |
+| 5.1.1 | Create Battle scene root | ✅ DONE | `scenes/battle/battle.tscn` |
+| 5.1.2 | Implement BattleManager orchestrator | ✅ DONE | `scripts/battle/battle_manager.gd` |
+| 5.1.3 | Implement basic enemy AI | ✅ DONE | `scripts/battle/enemy_ai.gd` |
+| 5.1.4 | Create manual encounter trigger (B key) | ✅ DONE | `scripts/debug/battle_debug_trigger.gd` |
+| 5.1.5 | Implement victory/defeat + BattleResult emission | ✅ DONE | — |
+| 5.1.6 | Wire EventBus emissions | ✅ DONE | — |
+| 5.1.7 | Headless validation via console | ✅ DONE | Code-review verified |
 
-### M5.2 — Battle UI
+### M5.2 — Battle UI ✅ COMPLETE
 
 | # | Task | Status | Files to Create |
 |---|------|--------|-----------------|
-| 5.2.1 | Create stat bar component (reusable) | ⬜ TODO | `scenes/ui/stat_bar.tscn` |
-| 5.2.2 | Create PartyPanel | ⬜ TODO | `scenes/battle/party_panel.tscn` |
-| 5.2.3 | Create EnemyPanel | ⬜ TODO | `scenes/battle/enemy_panel.tscn` |
-| 5.2.4 | Create CommandMenu (Attack only) | ⬜ TODO | `scenes/battle/command_menu.tscn` |
-| 5.2.5 | Create BattleLog | ⬜ TODO | `scenes/battle/battle_log.tscn` |
-| 5.2.6 | Create BattleUIController | ⬜ TODO | `scripts/battle/battle_ui_controller.gd` |
+| 5.2.1 | Create stat bar component (reusable) | ✅ DONE | `scenes/ui/stat_bar.tscn` + `scripts/ui/stat_bar.gd` |
+| 5.2.2 | Create PartyPanel | ✅ DONE | `scenes/battle/party_panel.tscn` + `scripts/battle/party_panel.gd` |
+| 5.2.3 | Create EnemyPanel | ✅ DONE | `scenes/battle/enemy_panel.tscn` + `scripts/battle/enemy_panel.gd` |
+| 5.2.4 | Create CommandMenu (Attack only) | ✅ DONE | `scenes/battle/command_menu.tscn` + `scripts/battle/command_menu.gd` |
+| 5.2.5 | Create BattleLog | ✅ DONE | `scenes/battle/battle_log.tscn` + `scripts/battle/battle_log.gd` |
+| 5.2.6 | Create BattleUIController | ✅ DONE | `scripts/battle/battle_ui_controller.gd` |
+
+**Key changes**: PLAYER_TURN is now a wait state. `request_player_action()` accepts `ATTACK` and returns `bool`. Panels self-subscribe to EventBus for targeted StatBar refresh. CommandMenu emits `action_requested(action)`. Zero `_use_ui` flag — BattleManager has no UI awareness.
 
 ### M5.3 — Party Save State
 
@@ -171,6 +174,7 @@ All navigation wiring validated:
 | M5/M6 Architecture Review | 2026-07-05 | M5 split into 4 sub-milestones. M6 split into 4+1 (Item deferred to M7). 7 foundation classes planned, 3 components introduced (StateMachine, TurnManager, DamageCalculator) |
 | M5.0.1–M5.0.4 Battle Foundation | 2026-07-05 | 6 files created: BattleCommand, BattleResult, BattleActor, DamageCalculator, BattleEnums, StatusEffect. Typed with DamageCalcResult, TargetResult, StatModifier. Extensible array-based status, enum elements, computed stat getters. |
 | M5.0.5 BattleStateMachine | 2026-07-05 | RefCounted state machine with 10 states, 14 transitions, 2 signals. Includes BattleOutcome enum added to battle_enums.gd. No gameplay logic, no scene deps. |
+| M5.0.6–M5.1.7 Battle Simulation | 2026-07-06 | 8 files created: TurnManager, BattleFactory, EnemyAI, BattleManager, battle.tscn, BattleDebugTrigger, 3 sample .tres + hero update. Headless battle loop complete with B-key trigger, EventBus integration, MAX_TURNS guard, centralized logging. Modified: project.godot, placeholder_map.tscn. |
 
 ---
 

@@ -181,29 +181,37 @@ Sample data is built alongside each system, not postponed to the end.
 - [x] Create `BattleEnums` constants — `scripts/battle/battle_enums.gd`
 - [x] Create `StatusEffect` — `scripts/battle/status_effect.gd`
 - [x] Create `BattleStateMachine` — `scripts/battle/battle_state_machine.gd`
-- [ ] Create `TurnManager` — `scripts/battle/turn_manager.gd`
-- [ ] Create sample .tres files (slime_stats, basic_attack, slime enemy, hero character)
+- [x] Create `TurnManager` — `scripts/battle/turn_manager.gd`
+- [x] Create `BattleFactory` — `scripts/battle/battle_factory.gd`
+- [x] Create sample .tres files (slime_stats, basic_attack, slime enemy, hero character)
 - [ ] Write DamageCalculator unit test
 
-#### M5.1 — Battle Simulation (headless)
-- [ ] Create Battle scene root — `scenes/battle/battle.tscn`
-- [ ] Implement BattleManager orchestrator
-- [ ] Implement basic enemy AI (Attack random)
-- [ ] Create manual encounter trigger (B key)
-- [ ] Implement victory/defeat + BattleResult emission
-- [ ] Wire EventBus emissions
-- [ ] Headless validation via console output
+#### M5.1 — Battle Simulation (headless) COMPLETE
+- [x] Create Battle scene root — `scenes/battle/battle.tscn`
+- [x] Implement BattleManager orchestrator
+- [x] Implement basic enemy AI (Attack random)
+- [x] Create manual encounter trigger (B key) — `scripts/debug/battle_debug_trigger.gd`
+- [x] Implement victory/defeat + BattleResult emission
+- [x] Wire EventBus emissions
+- [x] Headless validation via console output
 
-#### M5.2 — Battle UI
-- [ ] Create stat bar component (reusable) — `scenes/ui/stat_bar.tscn`
-- [ ] Create PartyPanel, EnemyPanel, CommandMenu (Attack only), BattleLog
-- [ ] Create BattleUIController — `scripts/battle/battle_ui_controller.gd`
+#### M5.2 — Battle UI ✅ COMPLETE
+- [x] Create stat bar component (reusable) — `scenes/ui/stat_bar.tscn` + `scripts/ui/stat_bar.gd`
+- [x] Create PartyPanel — `scenes/battle/party_panel.tscn` + `scripts/battle/party_panel.gd`
+- [x] Create EnemyPanel — `scenes/battle/enemy_panel.tscn` + `scripts/battle/enemy_panel.gd`
+- [x] Create CommandMenu (Attack only) — `scenes/battle/command_menu.tscn` + `scripts/battle/command_menu.gd`
+- [x] Create BattleLog — `scenes/battle/battle_log.tscn` + `scripts/battle/battle_log.gd`
+- [x] Create BattleUIController — `scripts/battle/battle_ui_controller.gd`
+- [x] BattleManager: `request_player_action()`, public accessors, PLAYER_TURN wait state
 
-#### M5.3 — Party Save State
-- [ ] Expand SaveManager._collect_save_data() with real party HP/SP/level
-- [ ] Expand SaveManager._apply_save_data() to restore party state
-- [ ] Wire autosave on battle victory
-- [ ] Manual save/load cycle test
+#### M5.3 — Party Save State ✅ COMPLETE
+- [x] New autoload `PartyState` — runtime holder for party HP/SP snapshots
+- [x] `SaveManager._collect_save_data()` reads `PartyState.snapshots` → `party_members`
+- [x] `SaveManager._apply_save_data()` writes `PartyState.snapshots` from `party_members`
+- [x] Autosave on battle victory via EventBus listener in `SaveManager._ready()`
+- [x] `BattleManager.get_party_snapshot()` — exports live actor HP/SP
+- [x] `PartyState.apply_to(party)` — restores snapshots onto fresh actors
+- [x] `BattleDebugTrigger` wire: apply before battle, write after battle
 
 ### Milestone 6: "Fight Smarter" — Full Command Set
 
