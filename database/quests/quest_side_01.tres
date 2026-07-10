@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="QuestResource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/quest_resource.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/quest_stage_resource.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/quest_objective_resource.gd" id="3"]
+
+[sub_resource type="Resource" id="obj_collect_herbs"]
+script = ExtResource("3")
+objective_id = "obj_collect_herbs"
+description = "Collect Herbs"
+objective_type = 1
+target_id = "herb"
+required_count = 5
+
+[sub_resource type="Resource" id="stage_collect"]
+script = ExtResource("2")
+stage_id = "stage_collect"
+description = "Gather herbs for the apothecary"
+objectives = Array[Resource("res://scripts/core/quest_objective_resource.gd")]([SubResource("obj_collect_herbs")])
+
+[sub_resource type="Resource" id="obj_return_apothecary"]
+script = ExtResource("3")
+objective_id = "obj_return_apothecary"
+description = "Return to the Apothecary"
+objective_type = 2
+target_id = "apothecary"
+required_count = 1
+
+[sub_resource type="Resource" id="stage_return"]
+script = ExtResource("2")
+stage_id = "stage_return"
+description = "Bring the herbs back to the apothecary"
+objectives = Array[Resource("res://scripts/core/quest_objective_resource.gd")]([SubResource("obj_return_apothecary")])
+
+[resource]
+script = ExtResource("1")
+quest_id = "quest_side_01"
+title = "Herb Gathering"
+description = "The apothecary needs herbs for medicine. Collect them nearby."
+quest_type = 1
+prerequisites = []
+stages = Array[Resource("res://scripts/core/quest_stage_resource.gd")]([SubResource("stage_collect"), SubResource("stage_return")])
+rewards = {
+"exp": 30,
+"gold": 50,
+"items": [
+{"id": "potion", "qty": 5}
+]
+}

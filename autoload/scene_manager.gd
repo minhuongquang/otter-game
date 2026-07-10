@@ -56,6 +56,7 @@ func change_scene(scene_path: String, data: Dictionary = {}) -> void:
 	scene_loaded.emit(scene_path)
 	scene_changed.emit(from_path, scene_path)
 	EventBus.emit_event("scene_changed", {"from": from_path, "to": scene_path})
+	EventBus.emit_event("area_entered", {"area_id": scene_path})
 
 func change_scene_with_overlay(scene_path: String, overlay_path: String, data: Dictionary = {}) -> void:
 	change_scene(scene_path, data)

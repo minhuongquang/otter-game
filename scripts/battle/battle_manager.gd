@@ -291,6 +291,8 @@ func _execute_command(cmd: BattleCommand) -> BattleResult:
 					if was_defeated:
 						_debug_log("%s defeated" % target.display_name)
 						EventBus.emit_event("actor_died", {"actor_id": target.actor_id, "display_name": target.display_name})
+						if target.team == BattleEnums.Team.ENEMY:
+							EventBus.emit_event("enemy_defeated", {"enemy_id": target.actor_id})
 
 			BattleEnums.CommandType.ITEM:
 				_execute_item_command(cmd, target, result)

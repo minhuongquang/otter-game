@@ -86,7 +86,9 @@ func _collect_save_data() -> Dictionary:
 		"equipment": _serialize_equipment(),
 		"gold": PartyState.gold,
 		"character_progression": PartyState.character_progression.duplicate(true),
-		"quests": [],
+		"quest_version": 1,
+		"quests": PartyState.quests.duplicate(true),
+		"completed_quests": PartyState.completed_quests.duplicate(),
 		"relationships": {},
 		"audio_settings": {},
 		"input_bindings": {}
@@ -152,6 +154,12 @@ func _apply_save_data(data: Dictionary) -> void:
 	# Character progression
 	if data.has("character_progression"):
 		PartyState.character_progression = data["character_progression"].duplicate(true)
+	
+	# Quest state (versioned)
+	if data.has("quests"):
+		PartyState.quests = data["quests"].duplicate(true)
+	if data.has("completed_quests"):
+		PartyState.completed_quests = data["completed_quests"].duplicate()
 	
 	# Scene restoration handled externally by SceneManager
 

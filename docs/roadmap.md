@@ -239,12 +239,11 @@ Sample data is built alongside each system, not postponed to the end.
 | **Playable result** | Battle victory → items in inventory → open inventory → use potion → equip sword |
 
 **Tasks**:
-- [ ] Implement `inventory_manager.gd` (add/remove/use/equip/currency)
-- [ ] Create inventory scenes (screen, item slot, category tabs, detail panel)
-- [ ] Wire victory rewards (EXP → level, currency → wallet, items → inventory)
-- [ ] Wire item usage (inventory screen + battle item command)
-- [ ] Create 5 sample items (Potion, Hi-Potion, Antidote, Iron Sword, Leather Armor)
-- [ ] Add inventory data to SaveManager
+- [x] Implement `inventory_manager.gd` (add/remove/use/equip/currency)
+- [x] Create inventory scenes (screen, item slot, category tabs, detail panel)
+- [x] Wire victory rewards (EXP → level, currency → wallet, items → inventory)
+- [x] Wire item usage (inventory screen + battle item command)
+- [x] Create 6 sample items (Potion, Hi-Potion, Antidote, Iron Sword, Leather Armor, Bronze Shield)
 
 ### Milestone 8: "Goal" — Quest System
 

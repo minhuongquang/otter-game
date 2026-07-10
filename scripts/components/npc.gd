@@ -57,6 +57,9 @@ func interact(player: Node2D) -> void:
 	# Start the dialogue
 	VNManager.start_dialogue(dialogue_id)
 	
+	# Emit for quest tracking — use dialogue_id as npc identifier
+	EventBus.emit_event("npc_talked", {"npc_id": dialogue_id})
+	
 	# Verify dialogue actually started; if not, clean up
 	if not VNManager.is_active:
 		push_warning("NPC: Dialogue failed to start for \"%s\", cleaning up" % dialogue_id)

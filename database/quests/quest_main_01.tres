@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="QuestResource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/quest_resource.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/quest_stage_resource.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/quest_objective_resource.gd" id="3"]
+
+[sub_resource type="Resource" id="obj_talk_elder"]
+script = ExtResource("3")
+objective_id = "obj_talk_elder"
+description = "Talk to the Village Elder"
+objective_type = 2
+target_id = "village_elder"
+required_count = 1
+
+[sub_resource type="Resource" id="stage_talk"]
+script = ExtResource("2")
+stage_id = "stage_talk"
+description = "Speak with the Village Elder"
+objectives = Array[Resource("res://scripts/core/quest_objective_resource.gd")]([SubResource("obj_talk_elder")])
+
+[sub_resource type="Resource" id="obj_kill_slimes"]
+script = ExtResource("3")
+objective_id = "obj_kill_slimes"
+description = "Defeat Slimes"
+objective_type = 0
+target_id = "slime"
+required_count = 5
+
+[sub_resource type="Resource" id="stage_hunt"]
+script = ExtResource("2")
+stage_id = "stage_hunt"
+description = "Defeat 5 Slimes"
+objectives = Array[Resource("res://scripts/core/quest_objective_resource.gd")]([SubResource("obj_kill_slimes")])
+
+[sub_resource type="Resource" id="obj_return_elder"]
+script = ExtResource("3")
+objective_id = "obj_return_elder"
+description = "Return to the Village Elder"
+objective_type = 2
+target_id = "village_elder"
+required_count = 1
+
+[sub_resource type="Resource" id="stage_return"]
+script = ExtResource("2")
+stage_id = "stage_return"
+description = "Report back to the Village Elder"
+objectives = Array[Resource("res://scripts/core/quest_objective_resource.gd")]([SubResource("obj_return_elder")])
+
+[resource]
+script = ExtResource("1")
+quest_id = "quest_main_01"
+title = "The Slime Menace"
+description = "The Village Elder needs your help clearing slimes near the village."
+quest_type = 0
+prerequisites = []
+stages = Array[Resource("res://scripts/core/quest_stage_resource.gd")]([SubResource("stage_talk"), SubResource("stage_hunt"), SubResource("stage_return")])
+rewards = {
+"exp": 100,
+"gold": 200,
+"items": [
+{"id": "iron_sword", "qty": 1}
+]
+}

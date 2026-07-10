@@ -13,6 +13,7 @@ signal item_removed(item_id: StringName, quantity: int)
 signal item_equipped(character_id: String, slot: StringName, item_id: StringName)
 signal item_unequipped(character_id: String, slot: StringName)
 signal currency_changed(old_value: int, new_value: int)
+signal level_changed(character_id: String, new_level: int)
 
 # ─── Battle Snapshots ─────────────────────────────────────────────────────────
 ## Persistent party runtime state.
@@ -56,6 +57,7 @@ func set_level(character_id: String, level: int) -> void:
 	if not character_progression.has(character_id):
 		character_progression[character_id] = {}
 	character_progression[character_id]["level"] = maxi(1, level)
+	level_changed.emit(character_id, level)
 
 # ─── Inventory ────────────────────────────────────────────────────────────────
 ## Owned items and quantities. { "potion": 3, "iron_sword": 1, ... }
@@ -174,6 +176,17 @@ func get_equipment_bonuses(character_id: String) -> Dictionary:
 			var bonus_value = item_res.stat_bonuses[stat_name]
 			bonuses[stat_name] = bonuses.get(stat_name, 0) + int(bonus_value)
 	return bonuses
+
+# ─── Quest State ──────────────────────────────────────────────────────────────
+## Active/available quest runtime state.
+## { "quest_main_01": { "state": 2, "current_stage": 0, "objective_progress": {...}, "reward_claimed": false }, ... }
+var quests: Dictionary = {}
+
+## Completed quest IDs in order of completion.
+var completed_quests: Array[String] = []
+
+## Quest state enum. Mirrors QuestManager.QuestState for save serialization.
+enum QuestState { LOCKED, AVAILABLE, ACTIVE, READY_TO_COMPLETE, COMPLETED, REWARDED }
 
 # ─── Equipment Slots Reference ────────────────────────────────────────────────
 ## Which slots a character supports. Hardcoded for prototype.
