@@ -48,9 +48,33 @@ func request_player_action(action_type: BattleEnums.CommandType) -> bool:
 			if target == null:
 				return false
 			cmd = BattleCommand.basic_attack(actor, target)
+		BattleEnums.CommandType.ITEM:
+			# ITEM usage handled in two phases:
+			# Phase 1: player selects item+target in UI.
+			# Phase 2: UI calls request_player_action_with_item().
+			# Single-phase ITEM (no sub-menu) not supported — reject.
+			return false
 		_:
 			return false  # other commands not implemented yet
 
+	_pending_command = cmd
+	_state_machine.transition_to(BattleStateMachine.State.EXECUTING_ACTION)
+	return true
+
+## Submit a specific item command. Called by UI after item+target selection.
+func request_player_action_with_item(item_id: StringName, target: BattleActor) -> bool:
+	if _state_machine.current_state != BattleStateMachine.State.PLAYER_TURN:
+		return false
+	var actor := _turn_manager.current_actor()
+	if actor == null:
+		return false
+
+	var inventory := InventoryManager.new()
+	if not inventory.can_use_item(item_id, target):
+		return false
+
+	var cmd := BattleCommand.new(actor, [target], BattleEnums.CommandType.ITEM)
+	cmd.item_id = item_id
 	_pending_command = cmd
 	_state_machine.transition_to(BattleStateMachine.State.EXECUTING_ACTION)
 	return true
@@ -221,6 +245,7 @@ func _on_battle_end(new_state: BattleStateMachine.State) -> void:
 		BattleStateMachine.State.VICTORY:
 			outcome = BattleEnums.BattleOutcome.VICTORY
 			_debug_log("Victory")
+			_process_victory_rewards()
 		BattleStateMachine.State.DEFEAT:
 			outcome = BattleEnums.BattleOutcome.DEFEAT
 			_debug_log("Defeat")
@@ -234,6 +259,7 @@ func _on_battle_end(new_state: BattleStateMachine.State) -> void:
 	_state_machine.transition_to(BattleStateMachine.State.CLEANUP)
 
 func _on_cleanup() -> void:
+	_store_party_snapshots()
 	_state_machine.transition_to(BattleStateMachine.State.FINISHED)
 
 # ─── Command Execution ────────────────────────────────────────────────────────
@@ -265,6 +291,9 @@ func _execute_command(cmd: BattleCommand) -> BattleResult:
 					if was_defeated:
 						_debug_log("%s defeated" % target.display_name)
 						EventBus.emit_event("actor_died", {"actor_id": target.actor_id, "display_name": target.display_name})
+
+			BattleEnums.CommandType.ITEM:
+				_execute_item_command(cmd, target, result)
 
 			BattleEnums.CommandType.GUARD:
 				cmd.actor.is_guarding = true
@@ -351,6 +380,88 @@ func _debug_log(msg: String) -> void:
 		print("[Battle] " + msg)
 
 # ─── Max Turns Guard ──────────────────────────────────────────────────────────
+# ─── Item Command Execution ───────────────────────────────────────────────────
+func _execute_item_command(cmd: BattleCommand, target: BattleActor, result: BattleResult) -> void:
+	var inventory := InventoryManager.new()
+	var item_id: StringName = cmd.item_id
+	if item_id == &"":
+		_debug_log("Item use failed: no item_id on command")
+		return
+
+	if not inventory.use_item(item_id, target):
+		_debug_log("Item use failed: %s on %s" % [item_id, target.display_name])
+		return
+
+	var item_res := inventory.get_item_resource(item_id)
+	var healing := 0
+	if item_res != null:
+		for effect: ItemEffect in item_res.consumable_effects:
+			if effect.effect_type == ItemEffect.EffectType.HEAL_HP:
+				healing = effect.value  # actual amount already applied by use_item
+	_debug_log("Used %s on %s" % [item_res.item_name if item_res else str(item_id), target.display_name])
+	result.add_target_result(target, 0, healing, false, false)
+
+# ─── Victory Rewards ──────────────────────────────────────────────────────────
+func _process_victory_rewards() -> void:
+	var total_exp := 0
+	var total_gold := 0
+	var drops: Array[Dictionary] = []
+
+	for enemy in _enemies:
+		total_exp += _get_enemy_exp(enemy)
+		total_gold += _get_enemy_gold(enemy)
+		drops.append_array(_roll_enemy_drops(enemy))
+
+	# Distribute rewards
+	for actor in _party:
+		PartyState.add_exp(actor.actor_id, total_exp)
+	PartyState.add_gold(total_gold)
+	for drop in drops:
+		PartyState.add_item(drop["item_id"], drop.get("quantity", 1))
+
+	EventBus.emit_event("battle_victory_rewards", {
+		"exp": total_exp,
+		"gold": total_gold,
+		"items": drops,
+	})
+
+	_debug_log("Rewards: %d EXP, %d gold, %d items" % [total_exp, total_gold, drops.size()])
+
+func _get_enemy_exp(enemy: BattleActor) -> int:
+	for s in Engine.get_singleton_list():
+		if str(s) == "Database":
+			var db := Engine.get_singleton(s)
+			var res: Resource = db.get_enemy(enemy.actor_id)
+			if res is EnemyResource:
+				return res.exp_reward
+			break
+	return 0
+
+func _get_enemy_gold(_enemy: BattleActor) -> int:
+	# Placeholder: 10 gold per enemy. Replace with EnemyResource.gold_reward if added.
+	return 10
+
+func _roll_enemy_drops(enemy: BattleActor) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for s in Engine.get_singleton_list():
+		if str(s) == "Database":
+			var db := Engine.get_singleton(s)
+			var res: Resource = db.get_enemy(enemy.actor_id)
+			if res is EnemyResource:
+				for drop in res.item_drops:
+					var chance: float = drop.get("chance", 0.0)
+					if randf() <= chance:
+						result.append({
+							"item_id": drop.get("item_id", ""),
+							"quantity": drop.get("quantity", 1),
+						})
+			break
+	return result
+
+# ─── Snapshots ────────────────────────────────────────────────────────────────
+func _store_party_snapshots() -> void:
+	PartyState.snapshots = get_party_snapshot()
+
 func _push_max_turns_abort() -> void:
 	push_error("BattleManager: exceeded MAX_TURNS (%d). Aborting." % MAX_TURNS)
 	_battle_result = BattleResult.new()

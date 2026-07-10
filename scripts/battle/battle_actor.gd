@@ -26,7 +26,7 @@ var current_hp: int = 0
 var current_sp: int = 0
 var status_effects: Array[StatusEffect] = []
 var is_guarding: bool = false
-var skills: Array[SkillResource] = []
+var skills: Array[Resource] = []
 
 # temporary stat modifiers, keyed by stat name → array of modifiers
 var stat_modifiers: Dictionary = {}

@@ -19,6 +19,7 @@ func _ready() -> void:
 		push_error("BattleUIController: BattleManager not found in parent.")
 		return
 
+	_battle_manager.battle_started.connect(_on_battle_started)
 	_battle_manager.turn_started.connect(_on_turn_started)
 	_battle_manager.battle_finished.connect(_on_battle_finished)
 	command_menu.action_requested.connect(_on_action_requested)
@@ -27,10 +28,15 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	if _battle_manager != null:
+		_battle_manager.battle_started.disconnect(_on_battle_started)
 		_battle_manager.turn_started.disconnect(_on_turn_started)
 		_battle_manager.battle_finished.disconnect(_on_battle_finished)
 
 # ─── Signal Handlers ──────────────────────────────────────────────────────────
+func _on_battle_started() -> void:
+	party_panel.set_party(_battle_manager.get_living_party())
+	enemy_panel.set_enemies(_battle_manager.get_living_enemies())
+
 func _on_turn_started(actor: BattleActor) -> void:
 	party_panel.refresh_all()
 	enemy_panel.refresh_all()
@@ -45,6 +51,22 @@ func _on_turn_started(actor: BattleActor) -> void:
 func _on_action_requested(action: BattleEnums.CommandType) -> void:
 	if _battle_manager == null:
 		return
+
+	# ITEM uses two-phase flow: auto-select first usable item on first living party member.
+	if action == BattleEnums.CommandType.ITEM:
+		var inventory := InventoryManager.new()
+		var usable := inventory.get_usable_items_in_battle()
+		if usable.is_empty():
+			return
+		var item_id: StringName = usable[0]["item_id"]
+		var target := _battle_manager.get_current_actor()
+		if target == null:
+			return
+		var item_accepted := _battle_manager.request_player_action_with_item(item_id, target)
+		if item_accepted:
+			command_menu.disable()
+		return
+
 	var accepted := _battle_manager.request_player_action(action)
 	if accepted:
 		command_menu.disable()

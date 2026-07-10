@@ -81,8 +81,11 @@ func _collect_save_data() -> Dictionary:
 		"current_scene": SceneManager.get_current_scene_path() if has_node("/root/SceneManager") else "",
 		"player_position": Vector2.ZERO,
 		"party_members": PartyState.snapshots.duplicate(),
-		"inventory": [],
-		"currency": 0,
+		"inventory_version": 1,
+		"inventory": PartyState.inventory.duplicate(),
+		"equipment": _serialize_equipment(),
+		"gold": PartyState.gold,
+		"character_progression": PartyState.character_progression.duplicate(true),
 		"quests": [],
 		"relationships": {},
 		"audio_settings": {},
@@ -134,4 +137,41 @@ func _apply_save_data(data: Dictionary) -> void:
 	if data.has("party_members"):
 		PartyState.snapshots = data["party_members"]
 	
+	# Inventory (versioned)
+	if data.has("inventory"):
+		PartyState.inventory = data["inventory"]
+	
+	# Equipment
+	if data.has("equipment"):
+		_deserialize_equipment(data["equipment"])
+	
+	# Gold
+	if data.has("gold"):
+		PartyState.gold = data["gold"]
+	
+	# Character progression
+	if data.has("character_progression"):
+		PartyState.character_progression = data["character_progression"].duplicate(true)
+	
 	# Scene restoration handled externally by SceneManager
+
+
+# === Equipment Serialization (StringName keys → String keys for JSON) =========
+func _serialize_equipment() -> Dictionary:
+	var result: Dictionary = {}
+	for char_id in PartyState.equipment:
+		var slots: Dictionary = {}
+		for slot: StringName in PartyState.equipment[char_id]:
+			var item_id: StringName = PartyState.equipment[char_id][slot]
+			slots[str(slot)] = str(item_id)
+		result[str(char_id)] = slots
+	return result
+
+func _deserialize_equipment(data: Dictionary) -> void:
+	PartyState.equipment.clear()
+	for char_id: String in data:
+		var slots_dict: Dictionary = data[char_id]
+		var slots: Dictionary = {}
+		for slot_str: String in slots_dict:
+			slots[StringName(slot_str)] = StringName(slots_dict[slot_str])
+		PartyState.equipment[char_id] = slots

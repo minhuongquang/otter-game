@@ -12,5 +12,12 @@ extends Resource
 @export var max_stack: int = 99
 @export var rarity: Rarity = Rarity.COMMON
 
+## Equipment fields — only used when item_type == EQUIPMENT.
+@export var equip_slot: StringName = &""
+@export var stat_bonuses: Dictionary = {}
+
+## Consumable effects — only used when item_type == CONSUMABLE.
+@export var consumable_effects: Array[ItemEffect] = []
+
 enum ItemType { CONSUMABLE, EQUIPMENT, KEY_ITEM, MATERIAL, TREASURE }
 enum Rarity { COMMON, UNCOMMON, RARE, LEGENDARY }
